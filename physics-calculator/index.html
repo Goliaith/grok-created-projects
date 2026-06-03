@@ -1,0 +1,2087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free, self-contained scientific physics calculator with 28+ formulas. Fully offline single-file HTML app.">
+    <title>PhysicsCalc • Scientific Calculator</title>
+    <style>
+        /* Minimal standalone base styles for portability (no external Tailwind required) */
+        .flex { display: flex; }
+        .flex-1 { flex: 1 1 0%; }
+        .flex-col { flex-direction: column; }
+        .flex-shrink-0 { flex-shrink: 0; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; }
+        .items-start { align-items: flex-start; }
+        .items-end { align-items: flex-end; }
+        .items-baseline { align-items: baseline; }
+        .justify-between { justify-content: space-between; }
+        .gap-1\.5 { gap: 0.375rem; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .gap-5 { gap: 1.25rem; }
+        .gap-x-1 { column-gap: 0.25rem; }
+        .gap-x-1\.5 { column-gap: 0.375rem; }
+        .gap-x-2 { column-gap: 0.5rem; }
+        .gap-x-3 { column-gap: 0.75rem; }
+        .gap-x-4 { column-gap: 1rem; }
+        .grid { display: grid; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .hidden { display: none; }
+        .block { display: block; }
+        .inline-flex { display: inline-flex; }
+        .fixed { position: fixed; }
+        .absolute { position: absolute; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .cursor-pointer { cursor: pointer; }
+        .border { border-width: 1px; }
+        .border-b { border-bottom-width: 1px; }
+        .border-t { border-top-width: 1px; }
+        .rounded-2xl { border-radius: 1rem; }
+        .rounded-3xl { border-radius: 1.5rem; }
+        .px-1 { padding-left: 0.25rem; padding-right: 0.25rem; }
+        .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+        .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .py-3\.5 { padding-top: 0.875rem; padding-bottom: 0.875rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+        .pt-4 { padding-top: 1rem; }
+        .pt-5 { padding-top: 1.25rem; }
+        .pb-4 { padding-bottom: 1rem; }
+        .pb-8 { padding-bottom: 2rem; }
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-1\.5 { margin-bottom: 0.375rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-5 { margin-bottom: 1.25rem; }
+        .mt-1 { margin-top: 0.25rem; }
+        .mt-1\.5 { margin-top: 0.375rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-3 { margin-top: 0.75rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-5 { margin-top: 1.25rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .ml-1 { margin-left: 0.25rem; }
+        .ml-2 { margin-left: 0.5rem; }
+        .ml-auto { margin-left: auto; }
+        .mr-2 { margin-right: 0.5rem; }
+        .w-4 { width: 1rem; }
+        .w-11 { width: 2.75rem; }
+        .w-16 { width: 4rem; }
+        .w-full { width: 100%; }
+        .h-2 { height: 0.5rem; }
+        .h-11 { height: 2.75rem; }
+        .h-16 { height: 4rem; }
+        .h-\[520px\] { height: 520px; }
+        .min-h-\[520px\] { min-height: 520px; }
+        .max-w-\[1280px\] { max-width: 1280px; }
+        .max-w-md { max-width: 28rem; }
+        .max-w-xs { max-width: 20rem; }
+        .min-w-0 { min-width: 0px; }
+        .text-xs { font-size: 0.75rem; line-height: 1rem; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .text-base { font-size: 1rem; line-height: 1.5rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-5xl { font-size: 3rem; line-height: 1; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+        .tracking-tight { letter-spacing: -0.025em; }
+        .tracking-wider { letter-spacing: 0.05em; }
+        .leading-none { line-height: 1; }
+        .leading-tight { line-height: 1.25; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+        .bg-slate-950 { background-color: #020617; }
+        .bg-slate-900 { background-color: #0f172a; }
+        .bg-slate-800 { background-color: #1e2937; }
+        .bg-slate-700 { background-color: #334155; }
+        .bg-blue-600 { background-color: #2563eb; }
+        .bg-blue-900\/60 { background-color: rgba(30, 58, 138, 0.6); }
+        .bg-emerald-900\/30 { background-color: rgba(16, 185, 129, 0.3); }
+        .bg-red-900\/30 { background-color: rgba(185, 28, 28, 0.3); }
+        .bg-black\/70 { background-color: rgba(0, 0, 0, 0.7); }
+        .bg-slate-800\/60 { background-color: rgba(30, 41, 59, 0.6); }
+        .text-slate-200 { color: #e2e8f0; }
+        .text-slate-300 { color: #cbd5e1; }
+        .text-slate-400 { color: #94a3b8; }
+        .text-slate-500 { color: #64748b; }
+        .text-blue-300 { color: #93c5fd; }
+        .text-blue-200 { color: #bfdbfe; }
+        .text-emerald-300 { color: #6ee7b7; }
+        .text-emerald-200 { color: #a7f3d0; }
+        .text-emerald-400 { color: #34d399; }
+        .text-red-300 { color: #fca5a5; }
+        .text-yellow-400 { color: #facc15; }
+        .text-white { color: #fff; }
+        .border-slate-700 { border-color: #334155; }
+        .border-slate-600 { border-color: #475569; }
+        .border-slate-800 { border-color: #1e2937; }
+        .border-blue-500 { border-color: #3b82f6; }
+        .border-blue-800 { border-color: #1e40af; }
+        .border-emerald-700 { border-color: #047857; }
+        .border-emerald-800 { border-color: #065f46; }
+        .border-red-700 { border-color: #b91c1c; }
+        .border-yellow-400 { border-color: #facc15; }
+        .border-slate-500 { border-color: #64748b; }
+        .focus\:border-blue-500:focus { border-color: #3b82f6; }
+        .focus\:border-blue-400:focus { border-color: #60a5fa; }
+        .focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+        .hover\:bg-blue-500:hover { background-color: #3b82f6; }
+        .hover\:bg-slate-800:hover { background-color: #1e2937; }
+        .hover\:bg-slate-600:hover { background-color: #475569; }
+        .hover\:bg-emerald-900\/30:hover { background-color: rgba(16, 185, 129, 0.3); }
+        .hover\:border-slate-400:hover { border-color: #94a3b8; }
+        .hover\:border-slate-600:hover { border-color: #475569; }
+        .hover\:border-slate-500:hover { border-color: #64748b; }
+        .hover\:border-yellow-400:hover { border-color: #facc15; }
+        .hover\:text-slate-200:hover { color: #e2e8f0; }
+        .hover\:text-slate-300:hover { color: #cbd5e1; }
+        .hover\:text-white:hover { color: #fff; }
+        .hover\:text-red-400:hover { color: #f87171; }
+        .active\:bg-blue-700:active { background-color: #1d4ed8; }
+        .transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .shadow-inner { box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05); }
+        .shadow-xl { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+        .backdrop-blur-sm { backdrop-filter: blur(4px); }
+        .z-\[100\] { z-index: 100; }
+        .z-\[60\] { z-index: 60; }
+        .overflow-auto { overflow: auto; }
+        .overflow-hidden { overflow: hidden; }
+        .whitespace-nowrap { white-space: nowrap; }
+        .text-\[10px\] { font-size: 10px; }
+        .text-\[9px\] { font-size: 9px; }
+        .leading-\[1\] { line-height: 1; }
+        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 50% { opacity: .5; } }
+
+        :root {
+            --primary: #3b82f6;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        
+        .font-display {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-weight: 600;
+        }
+
+        .physics-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .physics-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        .calc-list-item {
+            transition: all 0.1s ease;
+        }
+        
+        .calc-list-item:hover {
+            background-color: #1e2937;
+        }
+        
+        .calc-list-item.active {
+            background-color: #1e40af;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .formula-display {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            background: linear-gradient(145deg, #0f172a, #1e2937);
+            border: 1px solid #334155;
+        }
+
+        .result-value {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-feature-settings: "ss02";
+        }
+
+        .input-group {
+            transition: all 0.1s ease;
+        }
+
+        .input-group:focus-within {
+            transform: translateY(-1px);
+        }
+
+        .scientific-input {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        .section-header {
+            letter-spacing: -0.025em;
+        }
+
+        .physics-badge {
+            font-size: 0.65rem;
+            letter-spacing: 0.5px;
+        }
+
+        .math-symbol {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-weight: 600;
+        }
+
+        .result-card {
+            background: linear-gradient(145deg, #052e16, #14532d);
+            border: 1px solid #166534;
+        }
+
+        .nav-active {
+            background-color: #1e40af;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .variable-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .unit-badge {
+            font-size: 0.65rem;
+            padding: 1px 6px;
+            background-color: #334155;
+            color: #94a3b8;
+            border-radius: 3px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        .physics-grid {
+            scrollbar-width: thin;
+            scrollbar-color: #475569 #1e2937;
+        }
+
+        .formula-text {
+            font-size: 1.05rem;
+            line-height: 1.4;
+        }
+
+        .canvas-container {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .constant-chip {
+            transition: all 0.1s ease;
+        }
+        
+        .constant-chip:hover {
+            background-color: #334155;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200">
+    <!-- Shareable banner - makes it clear this is a portable single-file tool -->
+    <div class="bg-blue-900/40 border-b border-blue-800 text-center py-2 text-xs">
+        <div class="max-w-[1280px] mx-auto px-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-blue-200">
+            <span class="font-medium">📤 Single-file HTML tool</span>
+            <span class="hidden sm:inline">•</span>
+            <span>Save this file and open in any browser (double-click works)</span>
+            <span class="hidden sm:inline">•</span>
+            <span class="text-blue-300">100% offline • No install • No data leaves your device</span>
+            <button onclick="copyShareInstructions()" class="ml-2 px-2 py-0.5 bg-blue-800 hover:bg-blue-700 text-blue-100 rounded text-[10px]">Copy share note</button>
+            <a href="https://github.com/YOUR_USERNAME/grok-created-projects/tree/main/physics-calculator" 
+               class="ml-1 px-2 py-0.5 bg-blue-800 hover:bg-blue-700 text-blue-100 rounded text-[10px] no-underline" target="_blank">View on GitHub</a>
+        </div>
+    </div>
+
+    <div class="max-w-[1280px] mx-auto">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-800">
+            <div class="flex items-center gap-x-3">
+                <div class="flex items-center justify-center w-11 h-11 bg-blue-600 rounded-2xl shadow-inner text-3xl">
+                    ⚛️
+                </div>
+                <div>
+                    <h1 class="font-display text-3xl font-semibold tracking-tighter">PhysicsCalc</h1>
+                    <p class="text-[10px] text-slate-500 -mt-1">SCIENTIFIC • OFFLINE</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-x-4">
+                <!-- Global constants quick access -->
+                <div class="flex items-center bg-slate-900 border border-slate-800 rounded-3xl px-1 py-1 text-xs">
+                    <div class="px-3 flex items-center gap-x-2 text-slate-400">
+                        🌍
+                        <span class="font-medium">g =</span>
+                    </div>
+                    <input id="global-g" type="number" step="0.01" value="9.81" 
+                           class="w-16 bg-slate-950 border border-slate-700 rounded-3xl px-2.5 py-1 text-center text-sm font-mono focus:outline-none focus:border-blue-500">
+                    <span class="pr-3 text-slate-500 text-xs">m/s²</span>
+                </div>
+                
+                <div onclick="showConstantsModal()" 
+                     class="flex items-center gap-x-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 transition-colors rounded-3xl text-sm cursor-pointer">
+                    📖
+                    <span class="font-medium">Constants</span>
+                </div>
+
+                <!-- Quick user-friendly actions -->
+                <button onclick="pickRandomCalculation()" 
+                        class="flex items-center gap-x-2 px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-slate-500 transition-colors rounded-3xl text-sm">
+                    🎲
+                    <span class="hidden md:inline font-medium">Random</span>
+                </button>
+
+                <button id="favorites-filter-btn" onclick="toggleFavoritesFilter()" 
+                        class="flex items-center gap-x-2 px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-yellow-400 transition-colors rounded-3xl text-sm">
+                    ★
+                    <span class="hidden md:inline font-medium">Favorites</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="px-6 pt-6 pb-4">
+            <!-- Intro -->
+            <div class="flex items-end justify-between mb-4">
+                <div>
+                    <h2 class="font-display text-2xl font-semibold tracking-tight">Physics Calculations</h2>
+                    <p class="text-slate-400 text-sm">Select a calculation, enter variables, get precise results. All computation happens in your browser.</p>
+                </div>
+                <div class="text-xs px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-3xl text-slate-400 flex items-center gap-x-2">
+                    <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                    <span>Fully offline • No data leaves your device</span>
+                </div>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="flex flex-col md:flex-row gap-3 mb-4">
+                <div class="flex-1 relative">
+                    🔍
+                    <input id="search-input" 
+                           onkeyup="filterCalculations()"
+                           type="text" 
+                           placeholder="Search calculations (e.g. velocity, energy, gas, lens)..." 
+                           class="w-full bg-slate-900 border border-slate-700 focus:border-blue-500 transition-colors pl-11 py-3 rounded-3xl text-sm placeholder:text-slate-500 outline-none">
+                </div>
+                
+                <!-- Category filters -->
+                <div class="flex items-center gap-1.5 flex-wrap" id="category-filters">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                
+                <!-- Calculations List -->
+                <div class="lg:col-span-5 xl:col-span-4">
+                    <div class="bg-slate-900 border border-slate-700 rounded-3xl p-2 h-[520px] overflow-auto physics-grid" id="calculations-list">
+                        <!-- Populated dynamically by JavaScript -->
+                    </div>
+                    <div class="mt-2 text-[10px] text-slate-500 px-2 flex items-center justify-between">
+                        <div><span id="calc-count">28</span> <span id="calc-count-suffix">calculations available</span></div>
+                        <div onclick="resetFilters()" class="cursor-pointer hover:text-slate-300 transition-colors">Clear filters</div>
+                    </div>
+                </div>
+
+                <!-- Calculator Panel -->
+                <div class="lg:col-span-7 xl:col-span-8">
+                    <div id="calculator-panel" 
+                         class="bg-slate-900 border border-slate-700 rounded-3xl min-h-[520px] p-6 flex flex-col">
+                        
+                        <!-- Placeholder when nothing selected - more user friendly with quick guide -->
+                        <div id="calculator-placeholder" class="flex-1 flex flex-col items-center justify-center text-center px-4">
+                            <div class="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mb-4 text-3xl">
+                                🧮
+                            </div>
+                            <h3 class="font-semibold text-xl text-slate-300">Get started in 3 steps</h3>
+                            <ol class="text-left text-sm text-slate-400 mt-3 space-y-1 max-w-xs">
+                                <li><span class="font-semibold text-slate-300">1.</span> Browse or search the list on the left</li>
+                                <li><span class="font-semibold text-slate-300">2.</span> Click a formula (try starring ★ your favorites)</li>
+                                <li><span class="font-semibold text-slate-300">3.</span> Enter values → hit Calculate</li>
+                            </ol>
+                            <div class="mt-5 text-xs text-slate-500">
+                                Tip: Use the <span class="font-medium text-yellow-400">★ Favorites</span> button for quick access to what you use often.
+                            </div>
+                            <button onclick="pickRandomCalculation()" 
+                                    class="mt-4 text-xs px-4 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-2xl flex items-center gap-2">
+                                🎲
+                                <span>Try a random one</span>
+                            </button>
+                        </div>
+
+                        <!-- Dynamic Calculator Content -->
+                        <div id="calculator-content" class="hidden flex-1 flex flex-col">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <div id="calc-category-badge" 
+                                         class="inline-flex items-center text-[10px] font-semibold tracking-wider px-3 py-px rounded-2xl bg-blue-900/60 text-blue-300">
+                                    </div>
+                                    <h3 id="calc-name" class="font-display text-2xl font-semibold tracking-tight mt-1"></h3>
+                                    <p id="calc-description" class="text-sm text-slate-400 mt-0.5"></p>
+                                </div>
+                                <button onclick="clearCalculator()" 
+                                        class="text-xs px-3 py-1.5 hover:bg-slate-800 transition-colors rounded-2xl border border-slate-600 flex items-center gap-x-1.5 text-slate-400 hover:text-slate-200">
+                                    ✕
+                                    <span class="hidden md:inline">Close</span>
+                                </button>
+                            </div>
+
+                            <!-- Formula -->
+                            <div class="mb-5">
+                                <div class="text-xs uppercase tracking-widest text-slate-500 mb-1.5 font-medium">Formula</div>
+                                <div id="calc-formula" 
+                                     class="formula-display px-5 py-4 rounded-3xl text-lg font-medium text-blue-100 leading-tight">
+                                </div>
+                            </div>
+
+                            <!-- Inputs -->
+                            <div class="mb-2">
+                                <div class="text-xs uppercase tracking-widest text-slate-500 mb-2 font-medium">Input variables</div>
+                                <div id="inputs-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <!-- Inputs injected by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Action buttons -->
+                            <div class="flex items-center gap-3 mt-auto pt-4">
+                                <button onclick="performCalculation()" 
+                                        class="flex-1 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 transition-colors text-white font-semibold py-3.5 rounded-3xl flex items-center justify-center gap-x-2 text-sm shadow-inner">
+                                    ▶
+                                    <span>CALCULATE</span>
+                                </button>
+                                
+                                <button onclick="loadExampleValues()" 
+                                        class="px-5 text-sm font-medium border border-slate-600 hover:bg-slate-800 transition-colors py-3.5 rounded-3xl flex items-center gap-x-2">
+                                    ✨
+                                    <span class="hidden sm:inline">Example</span>
+                                </button>
+                                
+                                <button onclick="resetInputs()" 
+                                        class="px-5 text-sm font-medium border border-slate-600 hover:bg-slate-800 transition-colors py-3.5 rounded-3xl flex items-center gap-x-2">
+                                    ↺
+                                    <span class="hidden sm:inline">Reset</span>
+                                </button>
+                            </div>
+
+                            <!-- Inline user-friendly error message (replaces ugly alerts) -->
+                            <div id="calc-error" class="hidden mt-3 p-3 bg-red-900/30 border border-red-700 text-red-300 text-sm rounded-2xl"></div>
+
+                            <!-- Result -->
+                            <div id="result-section" class="hidden mt-5 pt-5 border-t border-slate-700">
+                                <div class="text-xs uppercase tracking-widest text-emerald-400 mb-1.5 font-medium">Result</div>
+                                
+                                <div class="result-card border-emerald-800 px-5 py-4 rounded-3xl">
+                                    <div class="flex items-baseline gap-x-3">
+                                        <div id="result-value" 
+                                             class="result-value text-5xl font-semibold text-emerald-300 tracking-tighter"></div>
+                                        <div id="result-unit" class="text-xl font-medium text-emerald-400"></div>
+                                    </div>
+                                    
+                                    <div id="result-formula-used" 
+                                         class="text-xs font-mono text-emerald-400/70 mt-2"></div>
+                                </div>
+
+                                <!-- Extra outputs for complex calcs -->
+                                <div id="extra-results" class="mt-3 grid grid-cols-2 gap-2 text-sm"></div>
+
+                                <!-- Visualization canvas container (shown for some calcs) -->
+                                <div id="viz-container" class="mt-4 hidden">
+                                    <div class="text-xs uppercase tracking-widest text-slate-500 mb-1.5 font-medium">Visualization</div>
+                                    <div class="canvas-container p-2">
+                                        <canvas id="viz-canvas" width="520" height="220" class="w-full"></canvas>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-2 mt-4">
+                                    <button onclick="copyResult(false)" 
+                                            class="flex-1 text-xs flex items-center justify-center gap-2 py-2 border border-emerald-700 hover:bg-emerald-900/30 transition-colors rounded-2xl text-emerald-300">
+                                        📋
+                                        <span>Copy value</span>
+                                    </button>
+                                    <button onclick="copyResult(true)" 
+                                            class="flex-1 text-xs flex items-center justify-center gap-2 py-2 border border-emerald-700 hover:bg-emerald-900/30 transition-colors rounded-2xl text-emerald-300">
+                                        📄
+                                        <span>Copy + formula</span>
+                                    </button>
+                                    
+                                    <button onclick="showExplanation()" 
+                                            class="flex-1 text-xs flex items-center justify-center gap-2 py-2 border border-slate-600 hover:bg-slate-800 transition-colors rounded-2xl">
+                                        ℹ️
+                                        <span>Notes</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="px-6 pb-8">
+            <div class="flex items-center justify-between mb-2 px-1">
+                <div class="flex items-center gap-x-2 text-sm font-medium text-slate-300">
+                    🕒
+                    <span>Recent Calculations</span>
+                </div>
+                <button onclick="clearHistory()" 
+                        class="text-xs text-slate-400 hover:text-red-400 transition-colors flex items-center gap-x-1">
+                    🗑️
+                    <span>Clear</span>
+                </button>
+            </div>
+            
+            <div id="history-container" 
+                 class="bg-slate-900 border border-slate-700 rounded-3xl min-h-[68px] p-3 text-sm flex flex-wrap gap-2">
+                <!-- History items injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Constants Modal -->
+    <div id="constants-modal" onclick="hideConstantsModal(event)" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" class="bg-slate-900 border border-slate-700 rounded-3xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="font-semibold text-lg">Physical Constants</h4>
+                <button onclick="hideConstantsModal()" class="text-xl leading-none text-slate-400 hover:text-white">×</button>
+            </div>
+            
+            <div class="space-y-1 text-sm" id="constants-list">
+                <!-- Populated by JS -->
+            </div>
+            
+            <div class="text-[10px] text-slate-500 mt-5">
+                Values are approximate. Click any row to copy the value.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Standalone version - no external Tailwind runtime config required.
+        // Core styling provided by the <style> block above.
+
+        // Physics constants
+        const PHYSICS_CONSTANTS = {
+            'g': { value: 9.80665, unit: 'm/s²', name: 'Standard gravity' },
+            'c': { value: 299792458, unit: 'm/s', name: 'Speed of light' },
+            'G': { value: 6.67430e-11, unit: 'N·m²/kg²', name: 'Gravitational constant' },
+            'h': { value: 6.62607015e-34, unit: 'J·s', name: 'Planck constant' },
+            'kB': { value: 1.380649e-23, unit: 'J/K', name: 'Boltzmann constant' },
+            'e': { value: 1.602176634e-19, unit: 'C', name: 'Elementary charge' },
+            'NA': { value: 6.02214076e23, unit: 'mol⁻¹', name: 'Avogadro constant' },
+            'R': { value: 8.314462618, unit: 'J/(mol·K)', name: 'Gas constant' },
+            'ε0': { value: 8.8541878128e-12, unit: 'F/m', name: 'Vacuum permittivity' },
+            'μ0': { value: 1.25663706212e-6, unit: 'N/A²', name: 'Vacuum permeability' }
+        };
+
+        // Main calculations database
+        const calculations = [
+            {
+                id: "suvat_v",
+                name: "Final Velocity (SUVAT)",
+                category: "Kinematics",
+                description: "Final velocity under constant acceleration using the first SUVAT equation.",
+                formula: "v = u + at",
+                inputs: [
+                    { id: "u", label: "Initial velocity (u)", unit: "m/s", default: 0 },
+                    { id: "a", label: "Acceleration (a)", unit: "m/s²", default: 9.81 },
+                    { id: "t", label: "Time (t)", unit: "s", default: 5 }
+                ],
+                compute: function(values) {
+                    const v = values.u + values.a * values.t;
+                    return { 
+                        value: v, 
+                        unit: "m/s",
+                        formulaUsed: `v = ${values.u} + ${values.a} × ${values.t}`
+                    };
+                }
+            },
+            {
+                id: "suvat_s",
+                name: "Displacement (SUVAT)",
+                category: "Kinematics",
+                description: "Displacement under constant acceleration.",
+                formula: "s = ut + ½at²",
+                inputs: [
+                    { id: "u", label: "Initial velocity (u)", unit: "m/s", default: 0 },
+                    { id: "a", label: "Acceleration (a)", unit: "m/s²", default: -9.81 },
+                    { id: "t", label: "Time (t)", unit: "s", default: 3.5 }
+                ],
+                compute: function(values) {
+                    const s = values.u * values.t + 0.5 * values.a * values.t * values.t;
+                    return { 
+                        value: s, 
+                        unit: "m",
+                        formulaUsed: `s = ${values.u}×${values.t} + ½×${values.a}×${values.t}²`
+                    };
+                }
+            },
+            {
+                id: "projectile",
+                name: "Projectile Motion",
+                category: "Kinematics",
+                description: "Range, maximum height, and time of flight for a projectile launched at an angle.",
+                formula: "R = v₀² sin(2θ) / g",
+                inputs: [
+                    { id: "v0", label: "Launch speed (v₀)", unit: "m/s", default: 25 },
+                    { id: "theta", label: "Launch angle (θ)", unit: "degrees", default: 45 },
+                    { id: "g", label: "Gravity (g)", unit: "m/s²", default: 9.81 }
+                ],
+                compute: function(values) {
+                    const thetaRad = values.theta * Math.PI / 180;
+                    const range = (values.v0 ** 2 * Math.sin(2 * thetaRad)) / values.g;
+                    const tFlight = (2 * values.v0 * Math.sin(thetaRad)) / values.g;
+                    const hMax = (values.v0 ** 2 * Math.sin(thetaRad) ** 2) / (2 * values.g);
+                    
+                    return { 
+                        value: range, 
+                        unit: "m",
+                        formulaUsed: `R = ${values.v0}² × sin(2×${values.theta}°) / ${values.g}`,
+                        extra: {
+                            "Time of flight": { value: tFlight.toFixed(3), unit: "s" },
+                            "Maximum height": { value: hMax.toFixed(3), unit: "m" }
+                        }
+                    };
+                },
+                hasVisualization: true
+            },
+            {
+                id: "kinetic_energy",
+                name: "Kinetic Energy",
+                category: "Energy & Work",
+                description: "Kinetic energy of a moving object.",
+                formula: "KE = ½mv²",
+                inputs: [
+                    { id: "m", label: "Mass (m)", unit: "kg", default: 2.5 },
+                    { id: "v", label: "Velocity (v)", unit: "m/s", default: 18 }
+                ],
+                compute: function(values) {
+                    const ke = 0.5 * values.m * values.v * values.v;
+                    return { 
+                        value: ke, 
+                        unit: "J",
+                        formulaUsed: `KE = ½ × ${values.m} × ${values.v}²`
+                    };
+                }
+            },
+            {
+                id: "grav_potential",
+                name: "Gravitational Potential Energy",
+                category: "Energy & Work",
+                description: "Gravitational potential energy near Earth's surface.",
+                formula: "PE = mgh",
+                inputs: [
+                    { id: "m", label: "Mass (m)", unit: "kg", default: 5 },
+                    { id: "h", label: "Height (h)", unit: "m", default: 12 },
+                    { id: "g", label: "Gravity (g)", unit: "m/s²", default: 9.81 }
+                ],
+                compute: function(values) {
+                    const pe = values.m * values.g * values.h;
+                    return { 
+                        value: pe, 
+                        unit: "J",
+                        formulaUsed: `PE = ${values.m} × ${values.g} × ${values.h}`
+                    };
+                }
+            },
+            {
+                id: "work_constant_force",
+                name: "Work Done by Constant Force",
+                category: "Energy & Work",
+                description: "Work done by a constant force acting over a distance.",
+                formula: "W = F × d × cos(θ)",
+                inputs: [
+                    { id: "F", label: "Force (F)", unit: "N", default: 150 },
+                    { id: "d", label: "Displacement (d)", unit: "m", default: 8 },
+                    { id: "theta", label: "Angle to displacement (θ)", unit: "degrees", default: 0 }
+                ],
+                compute: function(values) {
+                    const thetaRad = values.theta * Math.PI / 180;
+                    const w = values.F * values.d * Math.cos(thetaRad);
+                    return { 
+                        value: w, 
+                        unit: "J",
+                        formulaUsed: `W = ${values.F} × ${values.d} × cos(${values.theta}°)`
+                    };
+                }
+            },
+            {
+                id: "ideal_gas",
+                name: "Ideal Gas Law (Rearrangeable)",
+                category: "Thermodynamics",
+                description: "Ideal gas law. Choose which variable you want to solve for.",
+                formula: "PV = nRT",
+                inputs: [
+                    { id: "P", label: "Pressure (P)", unit: "Pa", default: 101325 },
+                    { id: "V", label: "Volume (V)", unit: "m³", default: 0.025 },
+                    { id: "n", label: "Amount of substance (n)", unit: "mol", default: 1.0 },
+                    { id: "T", label: "Temperature (T)", unit: "K", default: 298 }
+                ],
+                solveForOptions: ["P", "V", "n", "T"],
+                compute: function(values, solveFor) {
+                    const R = 8.314462618;
+                    let result, unit, formulaUsed;
+                    
+                    if (solveFor === "P") {
+                        result = (values.n * R * values.T) / values.V;
+                        unit = "Pa";
+                        formulaUsed = `P = nRT / V`;
+                    } else if (solveFor === "V") {
+                        result = (values.n * R * values.T) / values.P;
+                        unit = "m³";
+                        formulaUsed = `V = nRT / P`;
+                    } else if (solveFor === "n") {
+                        result = (values.P * values.V) / (R * values.T);
+                        unit = "mol";
+                        formulaUsed = `n = PV / RT`;
+                    } else {
+                        result = (values.P * values.V) / (values.n * R);
+                        unit = "K";
+                        formulaUsed = `T = PV / nR`;
+                    }
+                    
+                    return { value: result, unit, formulaUsed };
+                }
+            },
+            {
+                id: "ohms_law",
+                name: "Ohm's Law (Rearrangeable)",
+                category: "Electromagnetism",
+                description: "Ohm's law relating voltage, current, and resistance.",
+                formula: "V = IR",
+                inputs: [
+                    { id: "V", label: "Voltage (V)", unit: "V", default: 12 },
+                    { id: "I", label: "Current (I)", unit: "A", default: 2.5 },
+                    { id: "R", label: "Resistance (R)", unit: "Ω", default: 4.8 }
+                ],
+                solveForOptions: ["V", "I", "R"],
+                compute: function(values, solveFor) {
+                    let result, unit, formulaUsed;
+                    
+                    if (solveFor === "V") {
+                        result = values.I * values.R;
+                        unit = "V";
+                        formulaUsed = `V = I × R`;
+                    } else if (solveFor === "I") {
+                        result = values.V / values.R;
+                        unit = "A";
+                        formulaUsed = `I = V / R`;
+                    } else {
+                        result = values.V / values.I;
+                        unit = "Ω";
+                        formulaUsed = `R = V / I`;
+                    }
+                    
+                    return { value: result, unit, formulaUsed };
+                }
+            },
+            {
+                id: "coulombs_law",
+                name: "Coulomb's Law",
+                category: "Electromagnetism",
+                description: "Electrostatic force between two point charges.",
+                formula: "F = k · q₁q₂ / r²",
+                inputs: [
+                    { id: "q1", label: "Charge 1 (q₁)", unit: "C", default: 1.2e-6 },
+                    { id: "q2", label: "Charge 2 (q₂)", unit: "C", default: -3.5e-6 },
+                    { id: "r", label: "Distance (r)", unit: "m", default: 0.15 }
+                ],
+                compute: function(values) {
+                    const k = 8.987551789e9; // Coulomb's constant
+                    const f = k * values.q1 * values.q2 / (values.r * values.r);
+                    const sign = f > 0 ? "repulsive" : "attractive";
+                    return { 
+                        value: Math.abs(f), 
+                        unit: "N",
+                        formulaUsed: `F = k·q₁q₂ / r²`,
+                        note: sign
+                    };
+                }
+            },
+            {
+                id: "centripetal",
+                name: "Centripetal Force",
+                category: "Gravitation & Circular Motion",
+                description: "Force required to keep an object moving in a circle.",
+                formula: "F = mv²/r  or  F = mω²r",
+                inputs: [
+                    { id: "m", label: "Mass (m)", unit: "kg", default: 0.8 },
+                    { id: "v", label: "Tangential speed (v)", unit: "m/s", default: 12 },
+                    { id: "r", label: "Radius (r)", unit: "m", default: 2.5 }
+                ],
+                compute: function(values) {
+                    const f = values.m * values.v * values.v / values.r;
+                    return { 
+                        value: f, 
+                        unit: "N",
+                        formulaUsed: `F = m v² / r`
+                    };
+                }
+            },
+            {
+                id: "snells_law",
+                name: "Snell's Law",
+                category: "Waves & Optics",
+                description: "Refraction of light at the interface between two media.",
+                formula: "n₁ sin(θ₁) = n₂ sin(θ₂)",
+                inputs: [
+                    { id: "n1", label: "Refractive index 1 (n₁)", unit: "", default: 1.0 },
+                    { id: "theta1", label: "Incident angle (θ₁)", unit: "degrees", default: 35 },
+                    { id: "n2", label: "Refractive index 2 (n₂)", unit: "", default: 1.5 }
+                ],
+                compute: function(values) {
+                    const theta1Rad = values.theta1 * Math.PI / 180;
+                    const sinTheta2 = (values.n1 / values.n2) * Math.sin(theta1Rad);
+                    let theta2Deg = Math.asin(sinTheta2) * 180 / Math.PI;
+                    
+                    if (isNaN(theta2Deg)) theta2Deg = 90; // total internal reflection
+                    
+                    return { 
+                        value: theta2Deg, 
+                        unit: "°",
+                        formulaUsed: `θ₂ = arcsin( (n₁ / n₂) × sin(θ₁) )`
+                    };
+                }
+            },
+            {
+                id: "thin_lens",
+                name: "Thin Lens Equation",
+                category: "Waves & Optics",
+                description: "Relationship between object distance, image distance, and focal length.",
+                formula: "1/f = 1/u + 1/v",
+                inputs: [
+                    { id: "u", label: "Object distance (u)", unit: "m", default: 0.4 },
+                    { id: "v", label: "Image distance (v)", unit: "m", default: 0.6 },
+                    { id: "f", label: "Focal length (f)", unit: "m", default: 0.24 }
+                ],
+                solveForOptions: ["u", "v", "f"],
+                compute: function(values, solveFor) {
+                    let result, unit, formulaUsed;
+                    
+                    if (solveFor === "f") {
+                        result = 1 / (1/values.u + 1/values.v);
+                        unit = "m";
+                        formulaUsed = `1/f = 1/u + 1/v`;
+                    } else if (solveFor === "v") {
+                        result = 1 / (1/values.f - 1/values.u);
+                        unit = "m";
+                        formulaUsed = `v = 1 / (1/f - 1/u)`;
+                    } else {
+                        result = 1 / (1/values.f - 1/values.v);
+                        unit = "m";
+                        formulaUsed = `u = 1 / (1/f - 1/v)`;
+                    }
+                    
+                    return { value: result, unit, formulaUsed };
+                }
+            },
+            {
+                id: "escape_velocity",
+                name: "Escape Velocity",
+                category: "Gravitation & Circular Motion",
+                description: "Minimum speed needed to escape a massive body's gravitational field.",
+                formula: "vₑ = √(2GM / r)",
+                inputs: [
+                    { id: "M", label: "Mass of body (M)", unit: "kg", default: 5.972e24 },
+                    { id: "r", label: "Radius (r)", unit: "m", default: 6.371e6 }
+                ],
+                compute: function(values) {
+                    const G = 6.67430e-11;
+                    const ve = Math.sqrt(2 * G * values.M / values.r);
+                    return { 
+                        value: ve, 
+                        unit: "m/s",
+                        formulaUsed: `vₑ = √(2 G M / r)`
+                    };
+                }
+            },
+            {
+                id: "de_broglie",
+                name: "de Broglie Wavelength",
+                category: "Modern Physics",
+                description: "Wavelength associated with a moving particle (matter waves).",
+                formula: "λ = h / p = h / (mv)",
+                inputs: [
+                    { id: "m", label: "Mass (m)", unit: "kg", default: 9.109e-31 },
+                    { id: "v", label: "Velocity (v)", unit: "m/s", default: 2.2e6 }
+                ],
+                compute: function(values) {
+                    const h = 6.62607015e-34;
+                    const lambda = h / (values.m * values.v);
+                    return { 
+                        value: lambda, 
+                        unit: "m",
+                        formulaUsed: `λ = h / (m v)`
+                    };
+                }
+            },
+            {
+                id: "momentum",
+                name: "Linear Momentum",
+                category: "Momentum & Impulse",
+                description: "Momentum of an object in linear motion.",
+                formula: "p = m v",
+                inputs: [
+                    { id: "m", label: "Mass (m)", unit: "kg", default: 1500 },
+                    { id: "v", label: "Velocity (v)", unit: "m/s", default: 25 }
+                ],
+                compute: function(values) {
+                    const p = values.m * values.v;
+                    return { value: p, unit: "kg·m/s", formulaUsed: `p = m × v` };
+                }
+            },
+            {
+                id: "impulse",
+                name: "Impulse",
+                category: "Momentum & Impulse",
+                description: "Impulse delivered equals change in momentum.",
+                formula: "J = F Δt = Δp",
+                inputs: [
+                    { id: "F", label: "Average Force (F)", unit: "N", default: 800 },
+                    { id: "dt", label: "Contact time (Δt)", unit: "s", default: 0.25 }
+                ],
+                compute: function(values) {
+                    const J = values.F * values.dt;
+                    return { value: J, unit: "N·s", formulaUsed: `J = F × Δt` };
+                }
+            },
+            {
+                id: "torque",
+                name: "Torque",
+                category: "Rotational Dynamics",
+                description: "Tendency of a force to rotate an object.",
+                formula: "τ = r F sin(θ)",
+                inputs: [
+                    { id: "r", label: "Perpendicular distance (r)", unit: "m", default: 0.5 },
+                    { id: "F", label: "Force (F)", unit: "N", default: 120 },
+                    { id: "theta", label: "Angle between r and F (θ)", unit: "degrees", default: 90 }
+                ],
+                compute: function(values) {
+                    const thetaRad = values.theta * Math.PI / 180;
+                    const tau = values.r * values.F * Math.sin(thetaRad);
+                    return { value: tau, unit: "N·m", formulaUsed: `τ = r F sin(θ)` };
+                }
+            },
+            {
+                id: "rotational_ke",
+                name: "Rotational Kinetic Energy",
+                category: "Rotational Dynamics",
+                description: "Kinetic energy of a rotating object.",
+                formula: "KE_rot = ½ I ω²",
+                inputs: [
+                    { id: "I", label: "Moment of inertia (I)", unit: "kg·m²", default: 2.5 },
+                    { id: "omega", label: "Angular speed (ω)", unit: "rad/s", default: 12 }
+                ],
+                compute: function(values) {
+                    const ke = 0.5 * values.I * values.omega * values.omega;
+                    return { value: ke, unit: "J", formulaUsed: `KE = ½ I ω²` };
+                }
+            },
+            {
+                id: "specific_heat",
+                name: "Specific Heat Capacity",
+                category: "Thermodynamics",
+                description: "Heat energy to raise temperature of mass.",
+                formula: "Q = m c ΔT",
+                inputs: [
+                    { id: "m", label: "Mass (m)", unit: "kg", default: 1.5 },
+                    { id: "c", label: "Specific heat (c)", unit: "J/(kg·K)", default: 4186 },
+                    { id: "dT", label: "ΔTemperature (ΔT)", unit: "K", default: 25 }
+                ],
+                compute: function(values) {
+                    const Q = values.m * values.c * values.dT;
+                    return { value: Q, unit: "J", formulaUsed: `Q = m c ΔT` };
+                }
+            },
+            {
+                id: "latent_heat",
+                name: "Latent Heat (Phase Change)",
+                category: "Thermodynamics",
+                description: "Heat absorbed/released during phase change.",
+                formula: "Q = m L",
+                inputs: [
+                    { id: "m", label: "Mass (m)", unit: "kg", default: 0.5 },
+                    { id: "L", label: "Latent heat (L)", unit: "J/kg", default: 334000 }
+                ],
+                compute: function(values) {
+                    const Q = values.m * values.L;
+                    return { value: Q, unit: "J", formulaUsed: `Q = m L` };
+                }
+            },
+            {
+                id: "electrical_power",
+                name: "Electrical Power (Rearrangeable)",
+                category: "Electromagnetism",
+                description: "Electrical power dissipated or delivered.",
+                formula: "P = V I = I² R = V² / R",
+                inputs: [
+                    { id: "P", label: "Power (P)", unit: "W", default: 100 },
+                    { id: "V", label: "Voltage (V)", unit: "V", default: 12 },
+                    { id: "I", label: "Current (I)", unit: "A", default: 8.33 },
+                    { id: "R", label: "Resistance (R)", unit: "Ω", default: 1.44 }
+                ],
+                solveForOptions: ["P", "V", "I", "R"],
+                compute: function(values, solveFor) {
+                    let result, unit, formulaUsed;
+                    if (solveFor === "P") {
+                        result = values.V * values.I || (values.I * values.I * values.R) || (values.V * values.V / values.R);
+                        unit = "W";
+                        formulaUsed = `P = V I (or I²R or V²/R)`;
+                    } else if (solveFor === "V") {
+                        result = values.I * values.R || Math.sqrt(values.P * values.R);
+                        unit = "V";
+                        formulaUsed = `V = I R`;
+                    } else if (solveFor === "I") {
+                        result = values.V / values.R || Math.sqrt(values.P / values.R);
+                        unit = "A";
+                        formulaUsed = `I = V / R`;
+                    } else {
+                        result = values.V / values.I || (values.V * values.V / values.P);
+                        unit = "Ω";
+                        formulaUsed = `R = V / I`;
+                    }
+                    return { value: result, unit, formulaUsed };
+                }
+            },
+            {
+                id: "capacitor",
+                name: "Capacitor Relationships",
+                category: "Electromagnetism",
+                description: "Charge, voltage, and stored energy in a capacitor.",
+                formula: "Q = C V , U = ½ C V²",
+                inputs: [
+                    { id: "C", label: "Capacitance (C)", unit: "F", default: 1e-6 },
+                    { id: "V", label: "Voltage (V)", unit: "V", default: 12 },
+                    { id: "Q", label: "Charge (Q)", unit: "C", default: 1.2e-5 }
+                ],
+                solveForOptions: ["Q", "V", "U"],
+                compute: function(values, solveFor) {
+                    if (solveFor === "Q") {
+                        const Q = values.C * values.V;
+                        return { value: Q, unit: "C", formulaUsed: `Q = C × V` };
+                    } else if (solveFor === "V") {
+                        const V = values.Q / values.C;
+                        return { value: V, unit: "V", formulaUsed: `V = Q / C` };
+                    } else {
+                        let U = 0.5 * values.C * values.V * values.V;
+                        if (!values.V) U = values.Q * values.Q / (2 * values.C);
+                        return { value: U, unit: "J", formulaUsed: `U = ½ C V²` };
+                    }
+                }
+            },
+            {
+                id: "buoyancy",
+                name: "Buoyant Force (Archimedes)",
+                category: "Fluids",
+                description: "Upthrust force on a submerged or floating object.",
+                formula: "F_b = ρ V g",
+                inputs: [
+                    { id: "rho", label: "Fluid density (ρ)", unit: "kg/m³", default: 1000 },
+                    { id: "V", label: "Displaced volume (V)", unit: "m³", default: 0.002 },
+                    { id: "g", label: "Gravity (g)", unit: "m/s²", default: 9.81 }
+                ],
+                compute: function(values) {
+                    const Fb = values.rho * values.V * values.g;
+                    return { value: Fb, unit: "N", formulaUsed: `F_b = ρ V g` };
+                }
+            },
+            {
+                id: "doppler",
+                name: "Doppler Effect (Sound)",
+                category: "Waves & Sound",
+                description: "Apparent frequency for source moving toward observer.",
+                formula: "f' = f × v / (v - v_s)",
+                inputs: [
+                    { id: "f", label: "Source frequency (f)", unit: "Hz", default: 440 },
+                    { id: "v", label: "Speed of sound (v)", unit: "m/s", default: 343 },
+                    { id: "vs", label: "Source speed toward observer (v_s)", unit: "m/s", default: 20 }
+                ],
+                compute: function(values) {
+                    const fp = values.f * values.v / (values.v - values.vs);
+                    return { value: fp, unit: "Hz", formulaUsed: `f' = f v / (v - v_s)` };
+                }
+            },
+            {
+                id: "photon_energy",
+                name: "Photon Energy",
+                category: "Modern Physics",
+                description: "Energy carried by a single photon.",
+                formula: "E = h c / λ",
+                inputs: [
+                    { id: "lambda", label: "Wavelength (λ)", unit: "m", default: 5.5e-7 }
+                ],
+                compute: function(values) {
+                    const h = 6.62607015e-34;
+                    const c = 299792458;
+                    const E = (h * c) / values.lambda;
+                    return { value: E, unit: "J", formulaUsed: `E = h c / λ` };
+                }
+            },
+            {
+                id: "photoelectric",
+                name: "Photoelectric Effect",
+                category: "Modern Physics",
+                description: "Maximum kinetic energy of photoelectrons.",
+                formula: "KE_max = h f - φ",
+                inputs: [
+                    { id: "f", label: "Light frequency (f)", unit: "Hz", default: 1.2e15 },
+                    { id: "phi", label: "Work function (φ)", unit: "J", default: 3.5e-19 }
+                ],
+                compute: function(values) {
+                    const h = 6.62607015e-34;
+                    const KE = h * values.f - values.phi;
+                    return { value: KE, unit: "J", formulaUsed: `KE_max = h f - φ` };
+                }
+            },
+            {
+                id: "orbital_velocity",
+                name: "Orbital Velocity (Circular)",
+                category: "Gravitation & Circular Motion",
+                description: "Speed required for circular orbit around a mass.",
+                formula: "v = √(G M / r)",
+                inputs: [
+                    { id: "M", label: "Central body mass (M)", unit: "kg", default: 5.972e24 },
+                    { id: "r", label: "Orbital radius (r)", unit: "m", default: 6.771e6 }
+                ],
+                compute: function(values) {
+                    const G = 6.67430e-11;
+                    const v = Math.sqrt(G * values.M / values.r);
+                    return { value: v, unit: "m/s", formulaUsed: `v = √(G M / r)` };
+                }
+            },
+            {
+                id: "half_life",
+                name: "Radioactive Decay (Remaining Nuclei)",
+                category: "Nuclear Physics",
+                description: "Number of nuclei remaining after time t.",
+                formula: "N = N₀ × (½)^(t / T½)",
+                inputs: [
+                    { id: "N0", label: "Initial number (N₀)", unit: "", default: 10000 },
+                    { id: "t", label: "Elapsed time (t)", unit: "years", default: 10 },
+                    { id: "Thalf", label: "Half-life (T½)", unit: "years", default: 5.27 }
+                ],
+                compute: function(values) {
+                    const N = values.N0 * Math.pow(0.5, values.t / values.Thalf);
+                    return { value: N, unit: "", formulaUsed: `N = N₀ × ½^(t/T½)` };
+                }
+            }
+        ];
+
+        const CATEGORY_ICONS = {
+            'Kinematics': '🏃',
+            'Energy & Work': '⚡',
+            'Thermodynamics': '🌡️',
+            'Electromagnetism': '🔌',
+            'Gravitation & Circular Motion': '🌍',
+            'Waves & Optics': '🌊',
+            'Modern Physics': '⚛️',
+            'Momentum & Impulse': '💥',
+            'Rotational Dynamics': '🔄',
+            'Fluids': '💧',
+            'Waves & Sound': '🔊',
+            'Nuclear Physics': '☢️'
+        };
+
+        let currentCalculation = null;
+        let currentSolveFor = null;
+        let calculationHistory = [];
+        let favorites = new Set();
+        let showOnlyFavorites = false;
+
+        // Favorites helpers
+        function loadFavorites() {
+            try {
+                const saved = localStorage.getItem('physicscalc_favorites');
+                if (saved) favorites = new Set(JSON.parse(saved));
+            } catch(e) {}
+        }
+        function saveFavorites() {
+            try { localStorage.setItem('physicscalc_favorites', JSON.stringify(Array.from(favorites))); } catch(e) {}
+        }
+        function toggleFavorite(id, e) {
+            if (e) e.stopImmediatePropagation();
+            if (favorites.has(id)) favorites.delete(id);
+            else favorites.add(id);
+            saveFavorites();
+            // Re-render list
+            const searchVal = document.getElementById('search-input').value;
+            const activeCatBtn = document.querySelector('#category-filters button.nav-active');
+            const catFilter = activeCatBtn && activeCatBtn.textContent !== 'All' ? activeCatBtn.textContent : '';
+            renderCalculationsList(catFilter, searchVal);
+            // Toast feedback
+            showToast(favorites.has(id) ? 'Added to favorites' : 'Removed from favorites');
+        }
+        function toggleFavoritesFilter() {
+            showOnlyFavorites = !showOnlyFavorites;
+            const btn = document.getElementById('favorites-filter-btn');
+            if (btn) btn.classList.toggle('nav-active', showOnlyFavorites);
+            const searchVal = document.getElementById('search-input').value;
+            renderCalculationsList('', searchVal);
+        }
+
+        function pickRandomCalculation() {
+            let pool = calculations;
+            if (showOnlyFavorites && favorites.size > 0) {
+                pool = calculations.filter(c => favorites.has(c.id));
+            }
+            if (pool.length === 0) pool = calculations;
+            const random = pool[Math.floor(Math.random() * pool.length)];
+            selectCalculation(random.id);
+            showToast('Random calculation loaded');
+        }
+
+        function copyShareInstructions() {
+            const note = `PhysicsCalc - Single file scientific calculator\n\n` +
+                `Save this .html file and open it in any modern browser (Chrome, Edge, Firefox).\n` +
+                `• Works fully offline after the first load.\n` +
+                `• Contains 28+ physics formulas with inputs, calculations, history, favorites, and visualizations (projectile motion has live canvas).\n` +
+                `• No installation, no data collection. Just share the file!\n\n` +
+                `Tip: Star (★) your most-used calculations for quick access.\n\n` +
+                `Source & more projects: https://github.com/YOUR_USERNAME/grok-created-projects`;
+            navigator.clipboard.writeText(note).then(() => {
+                showToast('Share instructions copied!');
+            }).catch(() => {
+                alert(note);
+            });
+        }
+
+        // Simple toast notification
+        function showToast(message, duration = 1600) {
+            let toast = document.getElementById('app-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'app-toast';
+                toast.className = 'fixed bottom-4 right-4 bg-slate-800 border border-slate-600 text-sm px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2 z-[100]';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `✅ <span>${message}</span>`;
+            toast.style.display = 'flex';
+            setTimeout(() => {
+                if (toast) toast.style.display = 'none';
+            }, duration);
+        }
+
+        // Initialize everything
+        function initialize() {
+            // No external Tailwind config needed for standalone version
+            renderCategoryFilters();
+            renderCalculationsList();
+            renderConstantsList();
+            loadHistoryFromStorage();
+            loadFavorites();
+            
+            // Keyboard support
+            document.addEventListener('keydown', function(e) {
+                if (e.key === "Enter" && currentCalculation) {
+                    performCalculation();
+                }
+            });
+            
+            // Initial filter state
+            document.getElementById('search-input').addEventListener('input', filterCalculations);
+            
+            // Set global g listener (applies to any open calc that has a g input)
+            const gInput = document.getElementById('global-g');
+            gInput.addEventListener('change', function() {
+                if (currentCalculation) {
+                    const gField = document.querySelector('input[data-var="g"]');
+                    if (gField) gField.value = parseFloat(this.value) || 9.81;
+                }
+            });
+            
+            // Default: restore last used or select a friendly first calculation
+            setTimeout(() => {
+                try {
+                    const lastId = localStorage.getItem('physicscalc_last_calc');
+                    if (lastId && calculations.find(c => c.id === lastId)) {
+                        selectCalculation(lastId);
+                        return;
+                    }
+                } catch(e) {}
+                selectCalculation("suvat_v");
+            }, 420);
+        }
+
+        function renderCategoryFilters() {
+            const container = document.getElementById('category-filters');
+            const categories = [...new Set(calculations.map(c => c.category))];
+            
+            let html = `<button onclick="filterByCategory('all')" class="nav-active text-xs font-medium px-3.5 py-1.5 rounded-3xl border border-blue-500">All</button>`;
+            
+            categories.forEach(cat => {
+                const short = cat.split(' ')[0];
+                html += `<button onclick="filterByCategory('${cat}')" class="text-xs font-medium px-3.5 py-1.5 rounded-3xl border border-slate-600 hover:border-slate-400 transition-colors">${short}</button>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function filterByCategory(category) {
+            // Reset search
+            document.getElementById('search-input').value = '';
+            
+            // If using category filter, exit favorites-only mode for clarity
+            if (showOnlyFavorites) {
+                showOnlyFavorites = false;
+                const favBtn = document.getElementById('favorites-filter-btn');
+                if (favBtn) favBtn.classList.remove('nav-active');
+            }
+            
+            // Update active button styles
+            document.querySelectorAll('#category-filters button').forEach(btn => {
+                btn.classList.remove('nav-active', 'border-blue-500');
+                btn.classList.add('border-slate-600');
+                
+                if (category === 'all' && btn.textContent === 'All') {
+                    btn.classList.add('nav-active', 'border-blue-500');
+                    btn.classList.remove('border-slate-600');
+                } else if (btn.textContent === category.split(' ')[0]) {
+                    btn.classList.add('nav-active', 'border-blue-500');
+                    btn.classList.remove('border-slate-600');
+                }
+            });
+            
+            renderCalculationsList(category === 'all' ? '' : category);
+        }
+
+        function filterCalculations() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+            renderCalculationsList('', searchTerm);
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            showOnlyFavorites = false;
+            const favBtn = document.getElementById('favorites-filter-btn');
+            if (favBtn) favBtn.classList.remove('nav-active');
+            document.querySelectorAll('#category-filters button').forEach(btn => btn.classList.remove('nav-active', 'border-blue-500'));
+            document.querySelector('#category-filters button').classList.add('nav-active', 'border-blue-500');
+            renderCalculationsList();
+        }
+
+        function renderCalculationsList(filterCategory = '', searchTerm = '') {
+            const container = document.getElementById('calculations-list');
+            container.innerHTML = '';
+            
+            let filtered = calculations;
+            
+            // Apply favorites filter if active (user friendly quick access to starred)
+            if (showOnlyFavorites) {
+                filtered = filtered.filter(c => favorites.has(c.id));
+            }
+            
+            if (filterCategory) {
+                filtered = filtered.filter(c => c.category === filterCategory);
+            }
+            
+            if (searchTerm) {
+                filtered = filtered.filter(c => 
+                    c.name.toLowerCase().includes(searchTerm) || 
+                    c.description.toLowerCase().includes(searchTerm) ||
+                    c.category.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Update the count label to be context aware (user friendly)
+            const countEl = document.getElementById('calc-count');
+            const suffixEl = document.getElementById('calc-count-suffix');
+            countEl.textContent = filtered.length;
+            if (showOnlyFavorites) {
+                if (suffixEl) suffixEl.textContent = 'favorites';
+            } else {
+                if (suffixEl) suffixEl.textContent = 'calculations available';
+            }
+            
+            if (filtered.length === 0) {
+                const msg = showOnlyFavorites ? 
+                    `No favorites yet. Click the ★ on any calculation to star it.` : 
+                    `No calculations match your filters.`;
+                container.innerHTML = `<div class="p-8 text-center text-sm text-slate-500">${msg}</div>`;
+                return;
+            }
+            
+            filtered.forEach(calc => {
+                const isActive = currentCalculation && currentCalculation.id === calc.id;
+                const isFav = favorites.has(calc.id);
+                const iconClass = CATEGORY_ICONS[calc.category] || '🧮';
+                const shortCat = calc.category.split(' ')[0];
+                
+                const div = document.createElement('div');
+                div.className = `calc-list-item flex items-center gap-3 px-3 py-2.5 rounded-3xl border cursor-pointer mx-1 my-0.5 ${isActive ? 'active border-blue-500' : 'border-transparent hover:border-slate-600'}`;
+                
+                div.innerHTML = `
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <span class="text-blue-400 w-4 text-center flex-shrink-0 text-base">${iconClass}</span>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="font-medium text-sm truncate">${calc.name}</div>
+                                <div class="physics-badge px-1.5 py-px bg-slate-700 text-slate-300 rounded-xl text-[9px] flex-shrink-0">${shortCat}</div>
+                            </div>
+                            <div class="text-xs text-slate-400 truncate mt-0.5">${calc.description}</div>
+                        </div>
+                    </div>
+                    <div onclick="toggleFavorite('${calc.id}', event)" class="flex-shrink-0 px-1 py-1 text-lg leading-none ${isFav ? 'text-yellow-400' : 'text-slate-500 hover:text-yellow-300'}">
+                        ★
+                    </div>
+                `;
+                
+                div.onclick = (e) => {
+                    // Only select if not clicking the star
+                    if (!e.target.closest('★')) {
+                        selectCalculation(calc.id);
+                    }
+                };
+                container.appendChild(div);
+            });
+        }
+
+        function selectCalculation(id) {
+            currentCalculation = calculations.find(c => c.id === id);
+            if (!currentCalculation) return;
+            // Persist last used for better UX on reload
+            try { localStorage.setItem('physicscalc_last_calc', id); } catch(e) {}
+            
+            // Re-render list to highlight active
+            const searchVal = document.getElementById('search-input').value;
+            const activeCatBtn = document.querySelector('#category-filters button.nav-active');
+            const catFilter = activeCatBtn && activeCatBtn.textContent !== 'All' ? activeCatBtn.textContent : '';
+            
+            renderCalculationsList(catFilter, searchVal);
+            
+            // Show the calculator panel
+            document.getElementById('calculator-placeholder').classList.add('hidden');
+            document.getElementById('calculator-content').classList.remove('hidden');
+            
+            // Populate content
+            document.getElementById('calc-category-badge').textContent = currentCalculation.category.toUpperCase();
+            document.getElementById('calc-name').textContent = currentCalculation.name;
+            document.getElementById('calc-description').textContent = currentCalculation.description;
+            document.getElementById('calc-formula').innerHTML = currentCalculation.formula;
+            
+            // Build inputs
+            const inputsContainer = document.getElementById('inputs-container');
+            inputsContainer.innerHTML = '';
+            
+            // Handle rearrangeable calculations
+            if (currentCalculation.solveForOptions) {
+                const solveDiv = document.createElement('div');
+                solveDiv.className = `col-span-1 sm:col-span-2 mb-1`;
+                solveDiv.innerHTML = `
+                    <label class="variable-label block mb-1">Solve for</label>
+                    <select id="solve-for-select" onchange="handleSolveForChange()" 
+                            class="w-full bg-slate-800 border border-slate-600 rounded-2xl px-3 py-2 text-sm font-medium">
+                        ${currentCalculation.solveForOptions.map(opt => {
+                            const inputDef = currentCalculation.inputs.find(i => i.id === opt);
+                            return `<option value="${opt}">${inputDef ? inputDef.label : opt}</option>`;
+                        }).join('')}
+                    </select>
+                `;
+                inputsContainer.appendChild(solveDiv);
+                
+                currentSolveFor = currentCalculation.solveForOptions[0];
+            }
+            
+            currentCalculation.inputs.forEach(inputDef => {
+                // Skip the solve-for variable in rearrange mode
+                if (currentCalculation.solveForOptions && currentSolveFor === inputDef.id) {
+                    return;
+                }
+                
+                const wrapper = document.createElement('div');
+                wrapper.className = 'input-group';
+                
+                const defaultVal = inputDef.default !== undefined ? inputDef.default : '';
+                
+                wrapper.innerHTML = `
+                    <label class="variable-label flex justify-between items-center mb-1">
+                        <span>${inputDef.label}</span>
+                        <span class="unit-badge">${inputDef.unit}</span>
+                    </label>
+                    <input type="number" step="any" data-var="${inputDef.id}" value="${defaultVal}"
+                           class="scientific-input w-full bg-slate-800 border border-slate-600 focus:border-blue-400 transition-colors rounded-2xl px-4 py-2.5 text-base outline-none">
+                `;
+                
+                // Live friendly validation feedback (red border while invalid)
+                const inp = wrapper.querySelector('input');
+                inp.addEventListener('input', () => {
+                    const v = parseFloat(inp.value);
+                    if (inp.value.trim() !== '' && isNaN(v)) {
+                        inp.classList.add('border-red-500');
+                    } else {
+                        inp.classList.remove('border-red-500');
+                    }
+                });
+                
+                inputsContainer.appendChild(wrapper);
+            });
+            
+            // Clear previous result
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('viz-container').classList.add('hidden');
+            
+            // Set solve for default if applicable
+            if (currentCalculation.solveForOptions) {
+                const select = document.getElementById('solve-for-select');
+                if (select) select.value = currentSolveFor;
+            }
+        }
+
+        function handleSolveForChange() {
+            if (!currentCalculation || !currentCalculation.solveForOptions) return;
+            
+            currentSolveFor = document.getElementById('solve-for-select').value;
+            
+            // Rebuild inputs excluding the solve-for variable
+            const inputsContainer = document.getElementById('inputs-container');
+            const solveDiv = inputsContainer.querySelector('.col-span-1.sm\\:col-span-2');
+            
+            // Remove old non-solve inputs
+            Array.from(inputsContainer.children).forEach(child => {
+                if (!child.classList.contains('col-span-1') || child.classList.contains('sm:col-span-2')) {
+                    // keep solve div
+                } else {
+                    child.remove();
+                }
+            });
+            
+            // Re-add the correct inputs
+            currentCalculation.inputs.forEach(inputDef => {
+                if (currentSolveFor === inputDef.id) return;
+                
+                const wrapper = document.createElement('div');
+                wrapper.className = 'input-group';
+                
+                const defaultVal = inputDef.default !== undefined ? inputDef.default : '';
+                
+                wrapper.innerHTML = `
+                    <label class="variable-label flex justify-between items-center mb-1">
+                        <span>${inputDef.label}</span>
+                        <span class="unit-badge">${inputDef.unit}</span>
+                    </label>
+                    <input type="number" step="any" data-var="${inputDef.id}" value="${defaultVal}"
+                           class="scientific-input w-full bg-slate-800 border border-slate-600 focus:border-blue-400 transition-colors rounded-2xl px-4 py-2.5 text-base outline-none">
+                `;
+                
+                // Live friendly validation feedback (red border while invalid)
+                const inp = wrapper.querySelector('input');
+                inp.addEventListener('input', () => {
+                    const v = parseFloat(inp.value);
+                    if (inp.value.trim() !== '' && isNaN(v)) {
+                        inp.classList.add('border-red-500');
+                    } else {
+                        inp.classList.remove('border-red-500');
+                    }
+                });
+                
+                inputsContainer.appendChild(wrapper);
+            });
+            
+            // Hide old result
+            document.getElementById('result-section').classList.add('hidden');
+        }
+
+        function getInputValues() {
+            const values = {};
+            const inputs = document.querySelectorAll('#inputs-container input[data-var]');
+            
+            inputs.forEach(input => {
+                const varName = input.dataset.var;
+                values[varName] = parseFloat(input.value);
+            });
+            
+            // Add global g if relevant
+            if (!values.g && (currentCalculation.id.includes('projectile') || currentCalculation.id.includes('potential'))) {
+                values.g = parseFloat(document.getElementById('global-g').value) || 9.81;
+            }
+            
+            return values;
+        }
+
+        function performCalculation() {
+            if (!currentCalculation) return;
+            
+            // Hide any previous error
+            const errorEl = document.getElementById('calc-error');
+            if (errorEl) errorEl.classList.add('hidden');
+            
+            const values = getInputValues();
+            
+            // Better user-friendly validation (no alert popups)
+            const missingOrInvalid = [];
+            currentCalculation.inputs.forEach(inp => {
+                // Skip the one we're solving for in rearrangeable calcs
+                if (currentCalculation.solveForOptions && currentSolveFor === inp.id) return;
+                const val = values[inp.id];
+                if (val === undefined || isNaN(val)) {
+                    missingOrInvalid.push(inp.label || inp.id);
+                }
+            });
+            
+            if (missingOrInvalid.length > 0) {
+                if (errorEl) {
+                    errorEl.textContent = `Please enter valid numbers for: ${missingOrInvalid.join(', ')}`;
+                    errorEl.classList.remove('hidden');
+                }
+                // Also highlight bad inputs
+                document.querySelectorAll('#inputs-container input').forEach(el => {
+                    const v = parseFloat(el.value);
+                    if (isNaN(v)) el.classList.add('border-red-500');
+                    else el.classList.remove('border-red-500');
+                });
+                return;
+            }
+            
+            // Clear any red borders on success path
+            document.querySelectorAll('#inputs-container input').forEach(el => el.classList.remove('border-red-500'));
+            
+            let resultObj;
+            
+            if (currentCalculation.solveForOptions) {
+                const solveFor = currentSolveFor || currentCalculation.solveForOptions[0];
+                resultObj = currentCalculation.compute(values, solveFor);
+            } else {
+                resultObj = currentCalculation.compute(values);
+            }
+            
+            // Display result
+            const resultSection = document.getElementById('result-section');
+            resultSection.classList.remove('hidden');
+            
+            const valueEl = document.getElementById('result-value');
+            const unitEl = document.getElementById('result-unit');
+            
+            // Nice number formatting
+            let displayValue = resultObj.value;
+            if (Math.abs(displayValue) > 10000 || (Math.abs(displayValue) < 0.01 && displayValue !== 0)) {
+                valueEl.textContent = displayValue.toExponential(4);
+            } else {
+                valueEl.textContent = displayValue.toFixed(4);
+            }
+            
+            unitEl.textContent = resultObj.unit || '';
+            
+            // Formula recap
+            document.getElementById('result-formula-used').textContent = resultObj.formulaUsed || '';
+            
+            // Extra results (for projectile etc)
+            const extraContainer = document.getElementById('extra-results');
+            extraContainer.innerHTML = '';
+            
+            if (resultObj.extra) {
+                Object.keys(resultObj.extra).forEach(key => {
+                    const item = resultObj.extra[key];
+                    const div = document.createElement('div');
+                    div.className = `px-3 py-2 bg-slate-800/60 border border-slate-600 rounded-2xl text-xs`;
+                    div.innerHTML = `
+                        <div class="text-slate-400">${key}</div>
+                        <div class="font-semibold text-base text-emerald-200 tabular-nums">${item.value} <span class="text-xs text-emerald-300">${item.unit}</span></div>
+                    `;
+                    extraContainer.appendChild(div);
+                });
+            }
+            
+            // Visualization
+            const vizContainer = document.getElementById('viz-container');
+            if (currentCalculation.hasVisualization && currentCalculation.id === 'projectile') {
+                vizContainer.classList.remove('hidden');
+                drawProjectileVisualization(values, resultObj);
+            } else {
+                vizContainer.classList.add('hidden');
+            }
+            
+            // Add note if present
+            if (resultObj.note) {
+                const noteDiv = document.createElement('div');
+                noteDiv.className = 'text-xs text-emerald-400 mt-1 px-1';
+                noteDiv.textContent = resultObj.note;
+                extraContainer.appendChild(noteDiv);
+            }
+            
+            // Save to history
+            addToHistory(currentCalculation, values, resultObj);
+        }
+
+        function drawProjectileVisualization(values, resultObj) {
+            const canvas = document.getElementById('viz-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const W = canvas.width;
+            const H = canvas.height;
+            
+            ctx.clearRect(0, 0, W, H);
+            
+            const thetaRad = values.theta * Math.PI / 180;
+            const v0 = values.v0;
+            const g = values.g || 9.81;
+            
+            const tMax = (2 * v0 * Math.sin(thetaRad)) / g;
+            const range = resultObj.value;
+            const hMax = (v0 ** 2 * Math.sin(thetaRad) ** 2) / (2 * g);
+            
+            // Padding
+            const padX = 40;
+            const padY = 25;
+            
+            const scaleX = (W - padX * 2) / range;
+            const scaleY = (H - padY * 2) / hMax;
+            const scale = Math.min(scaleX, scaleY) * 0.9;
+            
+            // Ground
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padX, H - padY);
+            ctx.lineTo(W - padX, H - padY);
+            ctx.stroke();
+            
+            // Trajectory
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            
+            let first = true;
+            for (let t = 0; t <= tMax + 0.01; t += tMax / 60) {
+                const x = v0 * Math.cos(thetaRad) * t;
+                const y = v0 * Math.sin(thetaRad) * t - 0.5 * g * t * t;
+                
+                const px = padX + x * scale;
+                const py = H - padY - y * scale;
+                
+                if (first) {
+                    ctx.moveTo(px, py);
+                    first = false;
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.stroke();
+            
+            // Launch point
+            ctx.fillStyle = '#eab308';
+            ctx.beginPath();
+            ctx.arc(padX, H - padY, 5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '11px Inter, system-ui, sans-serif';
+            ctx.fillText('0', padX - 3, H - padY + 14);
+            ctx.fillText(range.toFixed(1) + ' m', W - padX - 10, H - padY + 14);
+            
+            // Max height marker
+            ctx.fillStyle = '#eab308';
+            ctx.fillText('h_max = ' + hMax.toFixed(1) + ' m', padX + 8, H - padY - hMax * scale - 6);
+        }
+
+        function loadExampleValues() {
+            if (!currentCalculation) return;
+            
+            currentCalculation.inputs.forEach(inputDef => {
+                const inputEl = document.querySelector(`input[data-var="${inputDef.id}"]`);
+                if (inputEl && inputDef.default !== undefined) {
+                    inputEl.value = inputDef.default;
+                }
+            });
+            
+            // Trigger calculate automatically for convenience
+            setTimeout(() => {
+                performCalculation();
+            }, 80);
+        }
+
+        function resetInputs() {
+            if (!currentCalculation) return;
+            
+            currentCalculation.inputs.forEach(inputDef => {
+                const inputEl = document.querySelector(`input[data-var="${inputDef.id}"]`);
+                if (inputEl && inputDef.default !== undefined) {
+                    inputEl.value = inputDef.default;
+                }
+            });
+            
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('viz-container').classList.add('hidden');
+        }
+
+        function clearCalculator() {
+            document.getElementById('calculator-content').classList.add('hidden');
+            document.getElementById('calculator-placeholder').classList.remove('hidden');
+            currentCalculation = null;
+            
+            // Refresh list highlight
+            const searchVal = document.getElementById('search-input').value;
+            renderCalculationsList('', searchVal);
+        }
+
+        function copyResult(rich = false) {
+            const valueEl = document.getElementById('result-value');
+            const unitEl = document.getElementById('result-unit');
+            const formulaEl = document.getElementById('result-formula-used');
+            
+            if (!valueEl) return;
+            
+            let text = `${valueEl.textContent} ${unitEl.textContent}`.trim();
+            if (rich && formulaEl && formulaEl.textContent) {
+                text = `${currentCalculation ? currentCalculation.name + ': ' : ''}${text}\nFormula: ${formulaEl.textContent}`;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = valueEl.textContent;
+                valueEl.textContent = rich ? 'Copied full!' : 'Copied!';
+                setTimeout(() => {
+                    if (valueEl) valueEl.textContent = originalText;
+                }, 1100);
+            }).catch(() => {
+                // Fallback
+                prompt("Copy this result:", text);
+            });
+        }
+
+        function showExplanation() {
+            if (!currentCalculation) return;
+            
+            const modal = document.createElement('div');
+            modal.className = `fixed inset-0 bg-black/70 flex items-center justify-center z-[60] p-4`;
+            
+            let content = `
+                <div onclick="event.target.remove()" class="absolute inset-0"></div>
+                <div onclick="event.stopImmediatePropagation()" class="relative bg-slate-900 border border-slate-700 rounded-3xl max-w-lg w-full p-6">
+                    <h4 class="font-semibold text-xl mb-2">${currentCalculation.name}</h4>
+                    <div class="text-sm text-slate-300 mb-4">${currentCalculation.description}</div>
+                    
+                    <div class="bg-slate-800 rounded-2xl p-4 text-sm">
+                        <div class="font-medium text-emerald-300 mb-1">Formula</div>
+                        <div class="font-mono text-emerald-100">${currentCalculation.formula}</div>
+                    </div>
+            `;
+            
+            // Add assumptions based on calculation
+            let assumptions = '';
+            switch (currentCalculation.id) {
+                case 'suvat_v':
+                case 'suvat_s':
+                case 'projectile':
+                    assumptions = 'Assumes constant acceleration (including gravity) and no air resistance.';
+                    break;
+                case 'ideal_gas':
+                    assumptions = 'Assumes ideal gas behavior (no intermolecular forces, point particles). Valid at low pressures and high temperatures.';
+                    break;
+                case 'snells_law':
+                    assumptions = 'Light ray at interface between two isotropic media. Total internal reflection occurs when sin(θ₂) would exceed 1.';
+                    break;
+                case 'thin_lens':
+                    assumptions = 'Thin lens approximation. Sign convention: object distance u is usually positive in the Cartesian convention used here.';
+                    break;
+                default:
+                    assumptions = 'Standard assumptions for the model apply. Check a physics textbook for edge cases and limitations.';
+            }
+            
+            content += `<div class="mt-4 text-xs text-slate-400"><strong class="text-slate-300">Assumptions:</strong> ${assumptions}</div>`;
+            
+            if (currentCalculation.id === 'coulombs_law') {
+                content += `<div class="mt-1 text-xs text-amber-400">Note: Positive force = repulsive. Negative = attractive.</div>`;
+            }
+            
+            content += `
+                    <div class="mt-6 flex justify-end">
+                        <button onclick="this.closest('.fixed').remove()" class="px-5 py-2 text-sm rounded-2xl bg-slate-700 hover:bg-slate-600">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            modal.innerHTML = content;
+            document.body.appendChild(modal);
+        }
+
+        // History management
+        function addToHistory(calc, values, result) {
+            const entry = {
+                id: Date.now(),
+                calcId: calc.id,
+                name: calc.name,
+                values: {...values},
+                resultValue: result.value,
+                resultUnit: result.unit,
+                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
+            
+            calculationHistory.unshift(entry);
+            if (calculationHistory.length > 8) calculationHistory.pop();
+            
+            saveHistoryToStorage();
+            renderHistory();
+        }
+        
+        function renderHistory() {
+            const container = document.getElementById('history-container');
+            container.innerHTML = '';
+            
+            if (calculationHistory.length === 0) {
+                container.innerHTML = `<div class="text-xs text-slate-500 px-2 py-1">No calculations yet. Results will appear here.</div>`;
+                return;
+            }
+            
+            calculationHistory.forEach((entry, index) => {
+                const div = document.createElement('div');
+                div.className = `px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl text-xs flex-shrink-0 cursor-pointer flex items-center gap-x-3`;
+                
+                let valDisplay = entry.resultValue;
+                if (Math.abs(valDisplay) > 10000 || Math.abs(valDisplay) < 0.001) {
+                    valDisplay = valDisplay.toExponential(2);
+                } else {
+                    valDisplay = valDisplay.toFixed(3);
+                }
+                
+                div.innerHTML = `
+                    <div>
+                        <div class="font-medium text-slate-200">${entry.name}</div>
+                        <div class="font-mono text-emerald-300 text-[13px]">${valDisplay} ${entry.resultUnit}</div>
+                    </div>
+                    <div class="text-[10px] text-slate-500 ml-auto text-right">${entry.timestamp}</div>
+                `;
+                
+                div.onclick = () => {
+                    // Load the calculation and values
+                    selectCalculation(entry.calcId);
+                    
+                    setTimeout(() => {
+                        // Restore values
+                        Object.keys(entry.values).forEach(key => {
+                            const input = document.querySelector(`input[data-var="${key}"]`);
+                            if (input) input.value = entry.values[key];
+                        });
+                        
+                        // Re-calculate
+                        performCalculation();
+                    }, 60);
+                };
+                
+                container.appendChild(div);
+            });
+        }
+        
+        function saveHistoryToStorage() {
+            try {
+                localStorage.setItem('physicscalc_history', JSON.stringify(calculationHistory));
+            } catch(e) {}
+        }
+        
+        function loadHistoryFromStorage() {
+            try {
+                const saved = localStorage.getItem('physicscalc_history');
+                if (saved) {
+                    calculationHistory = JSON.parse(saved);
+                    renderHistory();
+                }
+            } catch(e) {}
+        }
+        
+        function clearHistory() {
+            calculationHistory = [];
+            localStorage.removeItem('physicscalc_history');
+            renderHistory();
+        }
+
+        // Constants modal
+        function renderConstantsList() {
+            const container = document.getElementById('constants-list');
+            container.innerHTML = '';
+            
+            Object.keys(PHYSICS_CONSTANTS).forEach(key => {
+                const c = PHYSICS_CONSTANTS[key];
+                const div = document.createElement('div');
+                div.className = `constant-chip flex justify-between items-center px-4 py-2.5 hover:bg-slate-800 border border-transparent hover:border-slate-600 rounded-2xl cursor-pointer`;
+                
+                let valStr = c.value;
+                if (Math.abs(c.value) < 0.001 || Math.abs(c.value) > 1000) {
+                    valStr = c.value.toExponential(4);
+                } else {
+                    valStr = c.value.toFixed(4);
+                }
+                
+                div.innerHTML = `
+                    <div>
+                        <span class="font-mono font-semibold text-blue-300">${key}</span>
+                        <span class="text-xs text-slate-400 ml-2">${c.name}</span>
+                    </div>
+                    <div class="font-mono text-right">
+                        <span class="text-emerald-300">${valStr}</span>
+                        <span class="text-[10px] text-slate-500 ml-1">${c.unit}</span>
+                    </div>
+                `;
+                
+                div.onclick = () => {
+                    navigator.clipboard.writeText(c.value.toString()).then(() => {
+                        const orig = div.innerHTML;
+                        div.style.transitionDuration = '60ms';
+                        div.innerHTML = `<div class="w-full text-center text-emerald-400 font-medium">Copied ${key}!</div>`;
+                        setTimeout(() => {
+                            div.innerHTML = orig;
+                            div.style.transitionDuration = '';
+                        }, 900);
+                    });
+                };
+                
+                container.appendChild(div);
+            });
+        }
+        
+        function showConstantsModal(e) {
+            if (e) e.stopImmediatePropagation();
+            document.getElementById('constants-modal').classList.remove('hidden');
+            document.getElementById('constants-modal').classList.add('flex');
+        }
+        
+        function hideConstantsModal(e) {
+            const modal = document.getElementById('constants-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function filterCalculationsOnCategoryClick(category) {
+            // This is called from the pills
+            filterByCategory(category);
+        }
+
+        // Boot the app
+        window.onload = function() {
+            initialize();
+        };
+        
+        // Expose a couple helpers to console for power users
+        window.PhysicsCalc = {
+            listAll: () => calculations.map(c => c.id),
+            run: (id, values) => {
+                const calc = calculations.find(c => c.id === id);
+                if (!calc) return null;
+                return calc.compute(values);
+            }
+        };
+    </script>
+
+    <!-- Footer note for recipients -->
+    <div class="text-center py-3 text-[10px] text-slate-500 bg-slate-950 border-t border-slate-800">
+        📤 <strong>From the grok-created-projects collection</strong> — 
+        <a href="https://github.com/YOUR_USERNAME/grok-created-projects" target="_blank" class="underline">View on GitHub</a>. 
+        Save this single .html file and open it anywhere. 100% offline capable.
+    </div>
+</body>
+</html>
