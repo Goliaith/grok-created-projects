@@ -298,17 +298,17 @@
     </style>
 </head>
 <body class="bg-slate-950 text-slate-200">
-    <!-- Shareable banner - makes it clear this is a portable single-file tool -->
+    <!-- Shareable banner - Grok & Goliaith collaboration -->
     <div class="bg-blue-900/40 border-b border-blue-800 text-center py-2 text-xs">
         <div class="max-w-[1280px] mx-auto px-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-blue-200">
-            <span class="font-medium">📤 Single-file HTML tool</span>
+            <span class="font-medium">⚛️ Grok &amp; Goliaith</span>
             <span class="hidden sm:inline">•</span>
-            <span>Save this file and open in any browser (double-click works)</span>
+            <span class="font-medium">PhysicsCalc</span>
             <span class="hidden sm:inline">•</span>
-            <span class="text-blue-300">100% offline • No install • No data leaves your device</span>
+            <span>Single-file • 100% offline • Built together</span>
             <button onclick="copyShareInstructions()" class="ml-2 px-2 py-0.5 bg-blue-800 hover:bg-blue-700 text-blue-100 rounded text-[10px]">Copy share note</button>
             <a href="https://github.com/Goliaith/grok-created-projects/tree/main/physics-calculator" 
-               class="ml-1 px-2 py-0.5 bg-blue-800 hover:bg-blue-700 text-blue-100 rounded text-[10px] no-underline" target="_blank">View on GitHub</a>
+               class="ml-1 px-2 py-0.5 bg-blue-800 hover:bg-blue-700 text-blue-100 rounded text-[10px] no-underline" target="_blank">View source</a>
         </div>
     </div>
 
@@ -1249,13 +1249,14 @@
         }
 
         function copyShareInstructions() {
-            const note = `PhysicsCalc - Single file scientific calculator\n\n` +
-                `Save this .html file and open it in any modern browser (Chrome, Edge, Firefox).\n` +
-                `• Works fully offline after the first load.\n` +
-                `• Contains 28+ physics formulas with inputs, calculations, history, favorites, and visualizations (projectile motion has live canvas).\n` +
-                `• No installation, no data collection. Just share the file!\n\n` +
-                `Tip: Star (★) your most-used calculations for quick access.\n\n` +
-                `Source & more projects: https://github.com/Goliaith/grok-created-projects`;
+            const note = `PhysicsCalc — Scientific Physics Calculator\n\n` +
+                `A single-file, fully offline tool with 28+ physics formulas, rearrangeable solvers, live visualizations, favorites, and more.\n\n` +
+                `Built iteratively with Grok (xAI) through natural language collaboration with Goliaith.\n\n` +
+                `Save this .html file and open in any browser (Chrome/Edge/Firefox recommended).\n` +
+                `• No install, no server, no tracking.\n` +
+                `• Works 100% offline after first open.\n\n` +
+                `Tip: Use the ★ to favorite frequent formulas. Try the Random button!\n\n` +
+                `Part of the grok-created-projects collection: https://github.com/Goliaith/grok-created-projects`;
             navigator.clipboard.writeText(note).then(() => {
                 showToast('Share instructions copied!');
             }).catch(() => {
@@ -2079,9 +2080,9 @@
 
     <!-- Footer note for recipients -->
     <div class="text-center py-3 text-[10px] text-slate-500 bg-slate-950 border-t border-slate-800">
-        📤 <strong>From the grok-created-projects collection</strong> — 
-        <a href="https://github.com/Goliaith/grok-created-projects" target="_blank" class="underline">View on GitHub</a>. 
-        Save this single .html file and open it anywhere. 100% offline capable.
+        Built through deep iteration between <strong>Goliaith</strong> and <strong>Grok (xAI)</strong>. 
+        Part of <a href="https://github.com/Goliaith/grok-created-projects" target="_blank" class="underline">grok-created-projects</a>. 
+        Save &amp; share this single .html file freely.
     </div>
 </body>
 </html>
