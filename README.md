@@ -24,7 +24,7 @@ This repository is intended to be published on GitHub as a collection of Grok-as
 git init
 
 # 2. Add the remote (replace with your repo URL)
-git remote add origin https://github.com/goliaith/grok-created-projects.git
+git remote add origin https://github.com/Goliaith/grok-created-projects.git
 
 # 3. Stage everything
 git add .
@@ -40,7 +40,7 @@ git push -u origin main
 Then enable GitHub Pages (optional but nice for this project):
 - Go to repo Settings → Pages
 - Source: Deploy from a branch → `main` / `root`
-- Your calculator will be live at `https://goliaith.github.io/grok-created-projects/physics-calculator/`
+- Your calculator will be live at `https://Goliaith.github.io/grok-created-projects/physics-calculator/`
 
 ### Adding New Projects
 
@@ -88,7 +88,7 @@ Created with ❤️ and lots of iteration alongside Grok 4 (xAI).
 ## Quick Start for This Repo
 
 ```bash
-git clone https://github.com/goliaith/grok-created-projects.git
+git clone https://github.com/Goliaith/grok-created-projects.git
 cd grok-created-projects
 # Then open physics-calculator/index.html in your browser
 ```
