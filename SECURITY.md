@@ -36,4 +36,6 @@ All projects here were built iteratively with Grok using the HelixCore platform 
 
 For any security concerns or questions about this policy, contact the maintainer via their GitHub profile.
 
+See the root [REPO_HANDOFF.md](REPO_HANDOFF.md) for new-session restart instructions and the strict preservation rules.
+
 Thank you for respecting these guidelines.

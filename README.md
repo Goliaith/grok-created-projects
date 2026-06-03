@@ -2,6 +2,10 @@
 
 **A growing collection of software, tools, and experiments born from natural language collaboration between MrSilhouette and Grok (xAI).**
 
+> **NEW SESSION / AGENT RESTART**: Start here by reading [REPO_HANDOFF.md](REPO_HANDOFF.md) (this is the dedicated handoff file for efficient restarts when closing/reopening chats). Then read `.repo-update-rules.md` + SECURITY.md + the policy sections below.
+
+**A growing collection of software, tools, and experiments born from natural language collaboration between MrSilhouette and Grok (xAI).**
+
 This repo is more than a portfolio — it's a record of what becomes possible when a human and an AI iterate together on ambitious ideas, from deep mathematical mastery to practical, beautiful, shareable web applications.
 
 ## Our Collaboration Philosophy
@@ -25,12 +29,12 @@ Each step was driven by the user's vision and feedback. Grok handled planning, c
 
 ## Repository Structure
 
-- Root: Overview + instructions for the collection (including [.repo-update-rules.md](.repo-update-rules.md) — **must-read for any future agent/Grok updates**)
+- Root: Overview + instructions for the collection (including [REPO_HANDOFF.md](REPO_HANDOFF.md) — **start here for new sessions**; [.repo-update-rules.md](.repo-update-rules.md) — **must-read for any future agent/Grok updates**)
 - `physics-calculator/`: The full PhysicsCalc app (`index.html`) + detailed docs
 
 Future projects will follow the same pattern: self-contained when possible, excellent READMEs, easy to run and share.
 
-**Important:** See [.repo-update-rules.md](.repo-update-rules.md) (and the policy sections below) before making any changes to the repo structure or content.
+**Important:** See [REPO_HANDOFF.md](REPO_HANDOFF.md) and [.repo-update-rules.md](.repo-update-rules.md) (plus the policy sections below) before making any changes.
 
 ## Repository Policy & Security (Important)
 
