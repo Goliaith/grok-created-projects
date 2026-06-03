@@ -12,22 +12,6 @@ Every project here started with a conversation. Grok doesn't just generate code 
 - Educational and useful
 - A showcase of AI-assisted development done right
 
-## Featured Project
-
-### [PhysicsCalc — Scientific Physics Calculator](./physics-calculator)
-
-A fully self-contained, offline-first, single-file web app featuring **28+ physics formulas** across kinematics, thermodynamics, electromagnetism, fluids, waves, modern physics, nuclear, and more.
-
-**Key highlights from our work together:**
-- Iterative expansion from an initial request ("make an HTML scientific program for physics calculations") to a rich tool with rearrangeable solvers, live canvas visualizations (projectile trajectories), favorites system, persistent history, random discovery, and live validation.
-- Made extremely user-friendly and shareable: emoji icons, inline errors (no alerts), copy-with-formula, global constants editor, and a prominent sharing banner + instructions.
-- Zero dependencies after initial load — truly portable. Perfect for students, educators, or quick reference.
-- Evolved through multiple rounds: formula additions, UX polish, GitHub-ization, and branding as part of this collaborative collection.
-
-Open `physics-calculator/index.html` in any browser. Works completely offline.
-
-[Live on GitHub Pages](https://Goliaith.github.io/grok-created-projects/physics-calculator/) (if enabled)
-
 ## The Journey So Far
 
 This collection grew out of an extended training and creation process:
@@ -69,15 +53,26 @@ This collection is maintained exclusively by MrSilhouette in collaboration with 
 
 **External contributions, PRs, or issues are not accepted** (see [SECURITY.md](SECURITY.md) for policy).
 
-If you are the owner and wish to add a new project created with Grok:
+**Strict update rule for future additions (by owner + Grok only):**
+- **Never delete or modify existing projects** in the repo (e.g., do not remove or alter the `physics-calculator/` directory or its files when adding something new).
+- To add a new project:
+  1. Create a **new** subdirectory for it (e.g., `cool-new-tool/`).
+  2. Add the main deliverable (ideally `index.html` for web tools) + a rich `README.md` describing the collaboration, features, and usage.
+  3. **Only update the root README.md** — append a new entry under the "Current Projects" section (or equivalent) with the date, brief description of the new addition, and link to the new subdirectory. Do not rewrite or remove prior project descriptions.
+  4. Commit & push.
 
-1. Create a new folder (e.g. `cool-new-tool/`)
-2. Add the main deliverable (ideally `index.html` for web tools)
-3. Write a rich `README.md` describing the collaboration, features, and usage
-4. Update this root README with a link
-5. Commit & push
+The focus is on quality, security, controlled distribution, and preserving history of all projects created together rather than open collaboration or restructuring.
 
-The focus is on quality, security, and controlled distribution rather than open collaboration.
+## Current Projects
+
+- **[PhysicsCalc — Scientific Physics Calculator](./physics-calculator)** (added ~June 2026)
+  - A fully self-contained, offline-first, single-file web app featuring **28+ physics formulas** across kinematics, thermodynamics, electromagnetism, fluids, waves, modern physics, nuclear, and more.
+  - Key highlights: rearrangeable solvers, live canvas visualizations (e.g. projectile motion), favorites system, persistent history, random discovery, live validation, global constants, and shareable design.
+  - Evolved iteratively from user requests for an HTML physics calculator, formula expansion, UX improvements, and GitHub packaging.
+  - Open `physics-calculator/index.html` in any browser. Works completely offline.
+  - [Live demo](https://Goliaith.github.io/grok-created-projects/physics-calculator/) (if Pages enabled) | [Source in repo](./physics-calculator)
+
+(Future projects will be appended here as new subdirectories + a short update entry in this list. Existing entries are never removed or overwritten.)
 
 ## Tech & Principles
 

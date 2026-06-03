@@ -18,6 +18,7 @@ This repository is maintained as a **personal, read-only archive** of projects c
 - The repository is intended **only for reference and direct file sharing by the owner**.
 - **Do not fork this repository** for the purpose of running or distributing modified versions of the included applications.
 - **Do not run modified copies** of any HTML/JS files (e.g., PhysicsCalc `index.html`) obtained from forks, third-party downloads, or untrusted sources. These files contain executable code and could be tampered with to include malware.
+- **Strict preservation rule:** Future updates (by owner + Grok only) must **never delete or alter existing projects** (e.g., do not remove or change the `physics-calculator/` directory when adding new content). New projects are added as additional subdirectories only, and the root README.md is updated by *appending* a description of the new addition (no rewriting or removal of prior project entries).
 
 ## Recommendations for Users
 

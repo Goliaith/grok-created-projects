@@ -88,7 +88,7 @@ This project was deliberately engineered for easy distribution:
 
 The authors are not responsible for issues arising from modified copies.
 
-See the root [SECURITY.md](../SECURITY.md) for the repository-wide policy.
+See the root [SECURITY.md](../SECURITY.md) for the repository-wide policy (including the strict rule that existing projects like this one are never deleted or altered on future additions — new projects are appended only, with root README updated by addition only).
 
 ## 🛠️ Tech & Design
 
