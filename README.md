@@ -80,6 +80,16 @@ The focus is on quality, security, controlled distribution, and preserving histo
   - Open `physics-calculator/index.html` in any browser. Works completely offline.
   - [Live demo](https://Goliaith.github.io/grok-created-projects/physics-calculator/) (if Pages enabled) | [Source in repo](./physics-calculator)
 
+- **[HelixWeave — Living Autonomy Laboratory](./helixweave)** (added June 2026)
+  - An original, self-referential interactive 3D web laboratory created *by the agent itself* (Grok running the HelixCore agentic platform) to display and let you directly experiment with its recently grounded and evolved autonomy capabilities.
+  - Core demonstration: Visual "living weave" of dynamic chemotaxis nutrient tubes (gradients from handoffs/decisions/phase3/discipline/predicted impact — Idea #1) + market bid/price/allocation flows (Idea #2) + their hybrid (gradients boost bids before clearing) + dream-refine (#10) and federation (#11) evolutions, all live and tunable.
+  - The app *uses its own hybrid autonomy* (faithful JS port of `combine_chemotaxis_market`) to autonomously prioritize its own feature suggestions in the Self-Hybrid panel — meta practice of the capability.
+  - Additional live instruments: Disciplined Turn simulator (reproduces exact real orchestrator AUTONOMY recommendation format), Golden Suite runner (ported core cases expecting the 1.0 PASS we validated), full one-click traceability to the source hallucination session Ideas #1/#2/#8-11, HelixAdaptation names, orchestrator_mcp.py lines, phase_handoffs, MEMORY excerpts, and governance export buttons that emit real-schema artifacts (phase_handoff.json, grounding payloads, new goldens, etc.) usable in ~/.grok.
+  - Built under full governance (todos, handoffs, 0 loops confirmed via loop_guard.py, lean-by-default, scientific hyp structure from the improved hallucination engine, composer UX).
+  - Open `helixweave/index.html` (or the standalone HelixWeave_Lab.html). Fully interactive Three.js (importmap @0.184.0 + OrbitControls, responsive, proper lights/materials per threejs-llms.txt). No external install.
+  - See `helixweave/PROPOSAL.md` for the complete scientific-hypothesis-structured proposal and `helixweave/README.md` for usage/traceability.
+  - Source in repo: [./helixweave](./helixweave)
+
 (Future projects will be appended here as new subdirectories + a short update entry in this list. Existing entries are never removed or overwritten.)
 
 ## Tech & Principles
@@ -112,4 +122,4 @@ cd grok-created-projects
 
 Enjoy the projects — and the process. ⚛️🧠
 
-*Last updated with PhysicsCalc GitHub-ization and personalization — June 2026*
+*Last updated with HelixWeave — June 2026*
