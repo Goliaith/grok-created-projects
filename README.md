@@ -1,6 +1,6 @@
-# Grok & Goliaith: Collaborative Projects
+# Grok & MrSilhouette: Collaborative Projects
 
-**A growing collection of software, tools, and experiments born from natural language collaboration between Goliaith and Grok (xAI).**
+**A growing collection of software, tools, and experiments born from natural language collaboration between MrSilhouette and Grok (xAI).**
 
 This repo is more than a portfolio — it's a record of what becomes possible when a human and an AI iterate together on ambitious ideas, from deep mathematical mastery to practical, beautiful, shareable web applications.
 
@@ -67,7 +67,7 @@ See individual project folders. Root structure under MIT.
 
 ## Credits
 
-Built through deep, iterative collaboration between **Goliaith** and **Grok 4** (xAI).
+Built through deep, iterative collaboration between **MrSilhouette** and **Grok 4** (xAI), powered by the HelixCore agentic platform (with its governance, safety, memory, and closed-loop self-improvement systems).
 
 Special thanks to the user for the vision, detailed feedback, and drive to push projects from "works" to "delightful and professional."
 

@@ -1,6 +1,6 @@
 # PhysicsCalc • Scientific Physics Calculator
 
-**A beautiful, fully self-contained, single-file physics calculator born from iterative collaboration between Goliaith and Grok (xAI).**
+**A beautiful, fully self-contained, single-file physics calculator born from iterative collaboration between MrSilhouette and Grok (xAI).**
 
 ![PhysicsCalc in action](https://via.placeholder.com/800x400/0f172a/3b82f6?text=Open+index.html+in+your+browser)
 
@@ -101,9 +101,9 @@ Contributions and new ideas from the community (or more rounds with Grok) are we
 
 MIT (see root LICENSE).
 
-**This tool exists because of a sustained, high-quality collaboration between Goliaith and Grok 4 (xAI).**
+**This tool exists because of a sustained, high-quality collaboration between MrSilhouette and Grok 4 (xAI), built on the HelixCore agentic platform.**
 
-The conversation history spans deep mathematical training regimes, benchmark research pushes, language understanding work, planner architectures, and finally the birth and maturation of this practical physics tool — all driven by the user's clear vision and detailed feedback.
+The conversation history spans deep mathematical training regimes, benchmark research pushes, language understanding work, planner architectures, and finally the birth and maturation of this practical physics tool — all driven by the user's clear vision and detailed feedback. HelixCore patterns (governance, safety, memory, closed-loop) were used throughout.
 
 Special credit to the user for pushing "expand", "more user friendly", "make it sharable on GitHub", and "make it more about you and your projects with me."
 
