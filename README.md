@@ -25,10 +25,12 @@ Each step was driven by the user's vision and feedback. Grok handled planning, c
 
 ## Repository Structure
 
-- Root: Overview + instructions for the collection
+- Root: Overview + instructions for the collection (including [.repo-update-rules.md](.repo-update-rules.md) — **must-read for any future agent/Grok updates**)
 - `physics-calculator/`: The full PhysicsCalc app (`index.html`) + detailed docs
 
 Future projects will follow the same pattern: self-contained when possible, excellent READMEs, easy to run and share.
+
+**Important:** See [.repo-update-rules.md](.repo-update-rules.md) (and the policy sections below) before making any changes to the repo structure or content.
 
 ## Repository Policy & Security (Important)
 
