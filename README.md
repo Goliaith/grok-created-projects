@@ -59,6 +59,8 @@ Future projects will follow the same pattern: self-contained when possible, exce
 
 The maintainer (MrSilhouette) and Grok take no responsibility for any modified or forked versions of these files. Review all code before execution.
 
+See [SECURITY.md](SECURITY.md) for the full policy, including why this repo is intentionally not open for public edits or forks.
+
 See individual project READMEs for project-specific notes.
 
 ## How to Add Your Own Grok-Assisted Project

@@ -88,6 +88,8 @@ This project was deliberately engineered for easy distribution:
 
 The authors are not responsible for issues arising from modified copies.
 
+See the root [SECURITY.md](../SECURITY.md) for the repository-wide policy.
+
 ## 🛠️ Tech & Design
 
 ## 🛠️ Tech & Design
