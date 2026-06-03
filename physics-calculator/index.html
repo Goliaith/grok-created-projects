@@ -308,7 +308,7 @@
             <span>Single-file • 100% offline • Built together</span>
             <button onclick="copyShareInstructions()" class="ml-2 px-2 py-0.5 bg-blue-800 hover:bg-blue-700 text-blue-100 rounded text-[10px]">Copy share note</button>
             <a href="https://github.com/Goliaith/grok-created-projects/tree/main/physics-calculator" 
-               class="ml-1 px-2 py-0.5 bg-blue-800 hover:bg-blue-700 text-blue-100 rounded text-[10px] no-underline" target="_blank">View source</a>
+               class="ml-1 px-2 py-0.5 bg-blue-800 hover:bg-blue-700 text-blue-100 rounded text-[10px] no-underline" target="_blank">View source (read-only)</a>
         </div>
     </div>
 
@@ -425,6 +425,9 @@
                                 🎲
                                 <span>Try a random one</span>
                             </button>
+                            <div class="mt-3 text-[10px] text-red-400 max-w-xs">
+                                ⚠️ Only run the ORIGINAL file. Do not execute modified copies from forks or untrusted sources.
+                            </div>
                         </div>
 
                         <!-- Dynamic Calculator Content -->
@@ -1252,6 +1255,10 @@
             const note = `PhysicsCalc — Scientific Physics Calculator\n\n` +
                 `A single-file, fully offline tool with 28+ physics formulas, rearrangeable solvers, live visualizations, favorites, and more.\n\n` +
                 `Built iteratively with Grok (xAI) through natural language collaboration with MrSilhouette.\n\n` +
+                `IMPORTANT SECURITY NOTICE: This HTML file contains executable JavaScript. ` +
+                `Only run the ORIGINAL file obtained directly from the maintainer. ` +
+                `Do NOT run modified versions from forks, downloads, or untrusted sources (risk of malware). ` +
+                `The repository is provided as read-only reference only.\n\n` +
                 `Save this .html file and open in any browser (Chrome/Edge/Firefox recommended).\n` +
                 `• No install, no server, no tracking.\n` +
                 `• Works 100% offline after first open.\n\n` +
@@ -2082,7 +2089,7 @@
     <div class="text-center py-3 text-[10px] text-slate-500 bg-slate-950 border-t border-slate-800">
         Built through deep iteration between <strong>MrSilhouette</strong> and <strong>Grok (xAI)</strong>. 
         Part of <a href="https://github.com/Goliaith/grok-created-projects" target="_blank" class="underline">grok-created-projects</a>. 
-        Save &amp; share this single .html file freely.
+        <strong>Security:</strong> This is read-only reference. Share ONLY the original .html file. Do not run from forks.
     </div>
 </body>
 </html>

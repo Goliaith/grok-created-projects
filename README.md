@@ -46,6 +46,21 @@ Each step was driven by the user's vision and feedback. Grok handled planning, c
 
 Future projects will follow the same pattern: self-contained when possible, excellent READMEs, easy to run and share.
 
+## Repository Policy & Security (Important)
+
+**This repository contains executable code (HTML + JavaScript single-file applications).** To mitigate risks such as supply-chain attacks, malicious forks, or tampered files:
+
+- **This is a read-only reference archive.** 
+- **Do not fork this repository.**
+- **Do not run modified versions** of any .html files from forks, PRs, or untrusted sources. Always obtain the original files directly from the maintainer.
+- **Strongly recommended:** Set this repository to **Private** via GitHub Settings → General → "Danger Zone" → "Change repository visibility". This prevents public forks and limits exposure while still allowing direct file sharing (download the .html and distribute it).
+- When sharing tools like PhysicsCalc, prefer distributing the raw `.html` file directly (email, chat, USB, cloud drive) rather than public repo links or Pages URLs if maximum security is desired.
+- The applications perform no network requests after initial load and contain no external dependencies, but executable web content always carries some inherent risk.
+
+The maintainer (MrSilhouette) and Grok take no responsibility for any modified or forked versions of these files. Review all code before execution.
+
+See individual project READMEs for project-specific notes.
+
 ## How to Add Your Own Grok-Assisted Project
 
 1. Create a new folder (e.g. `cool-new-tool/`)

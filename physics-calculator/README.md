@@ -75,6 +75,21 @@ This project was deliberately engineered for easy distribution:
 
 **Source**: https://github.com/Goliaith/grok-created-projects/tree/main/physics-calculator
 
+### Security Notice for This Project
+
+**The `index.html` file contains executable JavaScript.** To prevent risks from malicious modifications (e.g. in forks or tampered copies):
+
+- Treat the repository as **read-only reference only**.
+- **Never run** the HTML file from a fork or any source other than the original provided by the maintainer.
+- **Prefer direct file sharing**: Download the original `index.html` and share *that file* (not a repo link) when distributing the calculator.
+- **Recommended action:** The parent repository should be set to **Private** in GitHub settings. This disables public forking and limits who can view the source while still allowing you to share the standalone .html file freely.
+- The app is designed to be fully offline and performs no network calls after loading, but caution with any web-based executable is advised.
+- Always audit the code yourself before trusting or running any version.
+
+The authors are not responsible for issues arising from modified copies.
+
+## 🛠️ Tech & Design
+
 ## 🛠️ Tech & Design
 
 - Pure vanilla HTML5 + CSS3 + JavaScript (no frameworks at runtime)
