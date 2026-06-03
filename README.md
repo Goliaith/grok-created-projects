@@ -61,6 +61,8 @@ This collection is maintained exclusively by MrSilhouette in collaboration with 
   3. **Only update the root README.md** — append a new entry under the "Current Projects" section (or equivalent) with the date, brief description of the new addition, and link to the new subdirectory. Do not rewrite or remove prior project descriptions.
   4. Commit & push.
 
+See [.repo-update-rules.md](.repo-update-rules.md) for a dedicated, machine-readable version of this rule (intended for future agent/Grok sessions working on the repo).
+
 The focus is on quality, security, controlled distribution, and preserving history of all projects created together rather than open collaboration or restructuring.
 
 ## Current Projects
