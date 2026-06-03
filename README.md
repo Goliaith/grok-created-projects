@@ -65,11 +65,19 @@ See individual project READMEs for project-specific notes.
 
 ## How to Add Your Own Grok-Assisted Project
 
+This collection is maintained exclusively by MrSilhouette in collaboration with Grok (xAI). 
+
+**External contributions, PRs, or issues are not accepted** (see [SECURITY.md](SECURITY.md) for policy).
+
+If you are the owner and wish to add a new project created with Grok:
+
 1. Create a new folder (e.g. `cool-new-tool/`)
 2. Add the main deliverable (ideally `index.html` for web tools)
 3. Write a rich `README.md` describing the collaboration, features, and usage
 4. Update this root README with a link
 5. Commit & push
+
+The focus is on quality, security, and controlled distribution rather than open collaboration.
 
 ## Tech & Principles
 
