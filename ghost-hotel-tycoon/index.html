@@ -1,0 +1,1376 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ðŸ‘» The Spectral Suites â€” Ghost Hotel Tycoon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&amp;display=swap');
+        
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0a0618;
+            color: #d1c4ff;
+        }
+        
+        .haunted {
+            background: #151033;
+            border: 1px solid #463a6b;
+        }
+        
+        .title-font {
+            font-family: "Creepster", system-ui;
+            letter-spacing: 3px;
+        }
+        
+        .ghost-glow {
+            text-shadow: 0 0 10px #a78bfa;
+        }
+        
+        .room-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .room-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+        }
+        
+        .room-empty {
+            border-style: dashed;
+            opacity: 0.6;
+        }
+        
+        .guest-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: grab;
+        }
+        
+        .guest-card:active {
+            cursor: grabbing;
+            transform: scale(0.98);
+        }
+        
+        .drop-zone {
+            transition: all 0.2s ease;
+        }
+        
+        .drop-zone.drag-over {
+            background: #1f1a40;
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+        }
+        
+        .mood-good { color: #67e8a0; }
+        .mood-ok { color: #facc15; }
+        .mood-bad { color: #f87171; }
+        
+        .stat-value {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .event-log {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+        }
+        
+        .haunted-button {
+            transition: all 0.1s ease;
+        }
+        
+        .haunted-button:hover {
+            transform: translateY(-1px);
+        }
+        
+        .haunted-button:active {
+            transform: scale(0.985);
+        }
+        
+        .need-tag {
+            background: #1f1a40;
+            font-size: 0.7rem;
+            padding: 1px 6px;
+            border-radius: 9999px;
+        }
+        
+        .spectral {
+            animation: spectral-flicker 3s infinite alternate;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-6">
+    <div class="max-w-[1100px] mx-auto">
+        <!-- Header -->
+        <div class="flex items-end justify-between mb-6">
+            <div class="flex items-center gap-x-4">
+                <div class="w-14 h-14 bg-violet-500/20 rounded-2xl flex items-center justify-center border border-violet-500/30">
+                    <i class="fa-solid fa-ghost text-4xl text-violet-400 spectral"></i>
+                </div>
+                <div>
+                    <h1 class="title-font text-6xl tracking-[4px] text-violet-300">The Spectral Suites</h1>
+                    <p class="text-violet-400 text-sm -mt-1">Est. 1892 â€¢ "No living guests. Seriously."</p>
+                </div>
+            </div>
+            
+            <div>
+                <div class="flex items-center gap-x-8 text-right">
+                    <div>
+                        <div class="text-xs text-violet-400 tracking-widest">NIGHT</div>
+                        <div id="night" class="text-5xl font-mono font-bold text-violet-200 tabular-nums">1</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-violet-400 tracking-widest">REPUTATION</div>
+                        <div id="reputation" class="text-5xl font-mono font-bold text-violet-200 tabular-nums">55</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-violet-400 tracking-widest">ECTOPLASM</div>
+                        <div id="ectoplasm" class="text-5xl font-mono font-bold text-violet-200 tabular-nums">35</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-violet-400 tracking-widest">ESSENCE</div>
+                        <div id="essence" class="text-5xl font-mono font-bold text-amber-300 tabular-nums">0</div>
+                    </div>
+                </div>
+                <!-- Goal Display for satisfying long-term play -->
+                <div class="mt-1 text-right">
+                    <div class="text-xs text-amber-400">GOAL: Night 20 â€¢ Rep â‰¥70 (View Codex for gamedev learnings)</div>
+                    <div id="goal-progress" class="text-sm font-mono text-amber-300"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Big Action -->
+        <div class="mb-6">
+            <button onclick="advanceNight()"
+                    class="w-full haunted-button bg-violet-600 hover:bg-violet-500 active:bg-violet-700 text-white text-xl font-semibold py-4 rounded-3xl flex items-center justify-center gap-x-3 shadow-lg shadow-violet-900/50">
+                <i class="fa-solid fa-moon text-2xl"></i>
+                <span>END THE NIGHT</span>
+            </button>
+            <div class="text-center text-xs text-violet-400 mt-1.5">The dead rest (or don't). New guests arrive. Chaos ensues.</div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- ROOMS -->
+            <div class="lg:col-span-7">
+                <div class="flex items-center justify-between mb-3 px-1">
+                    <div class="flex items-center gap-x-2 text-lg font-semibold">
+                        <i class="fa-solid fa-bed text-violet-400"></i>
+                        <span>Rooms</span>
+                    </div>
+                    <div class="text-xs text-violet-400">Drag guests onto empty rooms</div>
+                </div>
+                
+                <div id="rooms-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- WAITING GUESTS + UPGRADES -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- Waiting Guests -->
+                <div>
+                    <div class="flex items-center gap-x-2 mb-3 px-1">
+                        <i class="fa-solid fa-users text-violet-400"></i>
+                        <span class="font-semibold">Waiting in the Lobby</span>
+                        <span id="waiting-count" class="text-xs bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full tabular-nums"></span>
+                    </div>
+                    
+                    <div id="waiting-guests" class="min-h-[110px] haunted border rounded-3xl p-3 flex flex-wrap gap-2 content-start">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="text-[10px] text-violet-400 px-1 mt-1">Click a guest then click an empty room, or drag &amp; drop</div>
+                </div>
+
+                <!-- Staff (increased complexity) -->
+                <div class="mb-4">
+                    <div class="flex items-center gap-x-2 mb-2 px-1">
+                        <i class="fa-solid fa-user-secret text-violet-400"></i>
+                        <span class="font-semibold">Spectral Staff</span>
+                        <span id="staff-count" class="text-xs bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full tabular-nums"></span>
+                    </div>
+                    <div id="staff-list" class="haunted border rounded-2xl p-3 text-sm min-h-[40px]">
+                        <!-- Populated by JS: list of hired roles -->
+                    </div>
+                    <div class="text-[10px] text-violet-400 px-1">Hire via shop. Different roles provide unique passive benefits.</div>
+                </div>
+
+                <!-- Rituals (spend Essence for big swings) -->
+                <div class="mb-4">
+                    <div class="flex items-center gap-x-2 mb-2 px-1">
+                        <i class="fa-solid fa-magic text-amber-400"></i>
+                        <span class="font-semibold">Rituals</span>
+                    </div>
+                    <button onclick="performRitual()" class="w-full haunted-button bg-amber-600/80 hover:bg-amber-500 text-xs py-2 rounded-2xl flex items-center justify-center gap-x-2">
+                        <span>Perform Essence Ritual (+15 Rep or +Staff)</span>
+                    </button>
+                    <div class="text-[10px] text-violet-400 px-1 mt-1">Costs 15 Essence. High risk, high reward for desperate nights.</div>
+                </div>
+
+                <!-- Upgrades Shop -->
+                <div>
+                    <div class="flex items-center gap-x-2 mb-3 px-1">
+                        <i class="fa-solid fa-tools text-violet-400"></i>
+                        <span class="font-semibold">Spectral Upgrades</span>
+                    </div>
+                    <div class="text-[10px] text-violet-400 px-1 -mt-2 mb-2">Buy multiple times to apply the same upgrade to different rooms. Each purchase costs ectoplasm and lets you choose a room.</div>
+                    
+                    <div id="upgrades-shop" class="grid grid-cols-1 gap-2">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Log -->
+            <div class="lg:col-span-12">
+                <div class="flex items-center justify-between mb-2 px-1">
+                    <div class="flex items-center gap-x-2">
+                        <i class="fa-solid fa-scroll text-violet-400"></i>
+                        <span class="font-semibold">Recent Hauntings &amp; Mishaps</span>
+                    </div>
+                    <button onclick="clearLog()" class="text-xs text-violet-400 hover:text-violet-300">Clear</button>
+                </div>
+                
+                <div id="event-log" 
+                     class="haunted border rounded-3xl p-4 text-sm event-log max-h-[160px] overflow-y-auto space-y-1 leading-snug">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer controls -->
+        <div class="mt-6 flex flex-wrap gap-x-3 gap-y-2 items-center justify-between text-sm">
+            <div class="flex gap-x-2">
+                <button onclick="newGame()" 
+                        class="px-4 py-2 haunted border rounded-2xl hover:bg-white/5 text-xs flex items-center gap-x-2">
+                    <i class="fa-solid fa-redo"></i>
+                    <span>New Game</span>
+                </button>
+                <button onclick="saveGame()" 
+                        class="px-4 py-2 haunted border rounded-2xl hover:bg-white/5 text-xs flex items-center gap-x-2">
+                    <i class="fa-solid fa-save"></i>
+                    <span>Save</span>
+                </button>
+                <button onclick="loadGame()" 
+                        class="px-4 py-2 haunted border rounded-2xl hover:bg-white/5 text-xs flex items-center gap-x-2">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>Load</span>
+                </button>
+                <button onclick="showCodex()" 
+                        class="px-4 py-2 haunted border rounded-2xl hover:bg-white/5 text-xs flex items-center gap-x-2">
+                    <i class="fa-solid fa-book"></i>
+                    <span>Codex</span>
+                </button>
+            </div>
+            
+            <div class="text-xs text-violet-400">
+                Fully self-contained â€¢ Everything happens on this page â€¢ Open in any browser
+            </div>
+        </div>
+    </div>
+
+    <!-- End Night Summary Modal (for juicy feedback) -->
+    <div id="night-summary-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="haunted border rounded-3xl max-w-lg w-full p-6 text-center">
+            <h2 id="summary-title" class="title-font text-4xl text-violet-300 mb-4">Night Results</h2>
+            
+            <div id="summary-stats" class="flex justify-center gap-x-8 mb-6 text-sm">
+                <!-- JS populated: avg sat, rep change, ecto earned -->
+            </div>
+
+            <div id="summary-events" class="text-left text-sm bg-[#0f0c24] border border-[#463a6b] rounded-2xl p-4 mb-4 max-h-40 overflow-auto event-log">
+                <!-- Funny per-guest and event breakdowns -->
+            </div>
+
+            <div id="summary-flavor" class="italic text-violet-400 text-sm mb-6">
+                <!-- Random silly commentary -->
+            </div>
+
+            <button onclick="closeSummaryModal()" 
+                    class="w-full haunted-button bg-violet-600 hover:bg-violet-500 py-3 rounded-2xl font-semibold">
+                Back to the Hotel
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== GAME DATA ====================
+        const GUEST_TYPES = ["Ghost", "Poltergeist", "Vampire", "Banshee", "Skeleton", "Wraith", "Mummy", "Ghoul"];
+        
+        const GUEST_TITLES = ["Sir", "Lady", "Baron", "Count", "Mr.", "Ms.", "Captain", "Professor", "Uncle", "Auntie"];
+        
+        const GUEST_DESCRIPTORS = ["Rattling", "Whispering", "Ethereal", "Cursed", "Spectral", "Howling", "Dusty", "Gloomy", "Possessed", "Ancient", "Misty", "Grumpy", "Cobwebby", "Restless"];
+        
+        const GUEST_SURNAMES = ["McSpook", "von Shadow", "Rattlebones", "Graveheart", "Specter", "Doomwhisper", "Coffin", "Moonhowl", "Dustington", "Ectoplasm", "Chains", "Fogbottom", "Bonejangle"];
+        
+        const NEEDS = [
+            "complete darkness", "rattling chains (the louder the better)",
+            "no garlic or holy water nearby", "ectoplasm jacuzzi access",
+            "quiet after 3am", "a room with a view of the graveyard",
+            "permission to possess something", "extra thick dust everywhere",
+            "zero living humans visible", "loud howling allowed",
+            "blood substitute on tap", "a chatty companion skull",
+            "non-reflective mirror", "creaky singing floorboards",
+            "fresh cobwebs daily"
+        ];
+
+        // Tag system for reliable matching (gamedev improvement: explicit tags > brittle keywords)
+        const NEED_TAGS = {
+            "complete darkness": ["dark", "darkness"],
+            "rattling chains (the louder the better)": ["chains", "rattling"],
+            "no garlic or holy water nearby": ["no_garlic", "holy", "garlic"],
+            "ectoplasm jacuzzi access": ["ecto", "jacuzzi"],
+            "quiet after 3am": ["quiet", "silence"],
+            "a room with a view of the graveyard": ["graveyard", "view"],
+            "permission to possess something": ["possess", "possession"],
+            "extra thick dust everywhere": ["dust", "dusty"],
+            "zero living humans visible": ["no_living", "living", "seclusion"],
+            "loud howling allowed": ["howl", "howling"],
+            "blood substitute on tap": ["blood", "substitute"],
+            "a chatty companion skull": ["skull", "chatty"],
+            "non-reflective mirror": ["mirror", "reflect"],
+            "creaky singing floorboards": ["creaky", "floor"],
+            "fresh cobwebs daily": ["cobweb", "web"]
+        };
+        
+        const UPGRADE_CATALOG = [
+            { name: "Ectoplasm Jacuzzi", cost: 28, desc: "Ghosts love soaking. Satisfies jacuzzi needs.", tags: ["ecto", "jacuzzi"] },
+            { name: "Graveyard View Balcony", cost: 15, desc: "Perfect for eternal brooding.", tags: ["graveyard", "view"] },
+            { name: "Howling-Proof Chambers", cost: 22, desc: "Let the banshees wail freely.", tags: ["quiet", "howl", "howling"] },
+            { name: "Possession-Proof Minifridge", cost: 19, desc: "Blood substitute that stays unpossessed.", tags: ["blood", "possess"] },
+            { name: "Industrial Dusting Service", cost: 9, desc: "Daily fresh dust & cobwebs.", tags: ["dust", "cobweb", "web"] },
+            { name: "Non-Reflective Mirrors", cost: 24, desc: "Vampires can finally do their hair.", tags: ["mirror", "reflect"] },
+            { name: "Chatty Skull Collection", cost: 13, desc: "Sassy skulls for lonely spirits.", tags: ["skull", "chatty"] },
+            { name: "Creaky Floorboard Symphony", cost: 11, desc: "The floor now plays mournful tunes.", tags: ["creaky", "floor"] },
+            { name: "Hire Spectral Bellhop", cost: 40, desc: "A helpful ghost employee who passively satisfies 1 need per night for the whole hotel.", tags: ["staff"] },
+            { name: "Eternal Darkness Drapes", cost: 18, desc: "Blackout everything. Satisfies complete darkness needs.", tags: ["dark", "darkness"] },
+            { name: "Anti-Holy Ward", cost: 16, desc: "Keeps garlic and holy items at bay. Satisfies no garlic/holy needs.", tags: ["garlic", "holy", "no_garlic"] },
+            { name: "Seclusion Sigils", cost: 14, desc: "Makes the room feel completely isolated from the living. Satisfies zero living humans visible.", tags: ["no_living", "living", "seclusion"] },
+            { name: "Rattling Chain Kit", cost: 10, desc: "Extra chains for that satisfying noise. Satisfies rattling chains needs.", tags: ["chains", "rattling"] },
+        ];
+        
+        const FUN_EVENTS = [
+            "A poltergeist had a tantrum and threw every key into the void. -12 ectoplasm.",
+            "The vampire said the blood substitute 'tastes like regret'. Reputation damage.",
+            "A surprise ghost wedding broke out in the lobby! Everyone loved it. +18 rep!",
+            "The banshee hit a note so high it shattered the 'Do Not Disturb' signs.",
+            "A living pizza delivery guy wandered in. Pure panic. -8 reputation.",
+            "One of the mummies got their bandages caught in the dumbwaiter.",
+            "The chains in the east wing started a conga line. The guests are thrilled.",
+            "A wraith complained that 'the afterlife is too mainstream now'.",
+            "A skeleton lost its head (again). We found it in the laundry.",
+        ];
+
+        // Choice events for increased player agency (gamedev: decisions with consequences)
+        const CHOICE_EVENTS = [
+            {
+                text: "A powerful Wraith offers a pact: grant it a permanent 'luxury' room feature in exchange for a big essence boost, or refuse and risk a haunting.",
+                options: [
+                    { label: "Accept Pact", effect: () => { state.essence += 25; addLog("You accepted the pact. Essence surges, but the Wraith now demands special treatment forever."); state.milestones.push("Wraith Pact"); } },
+                    { label: "Refuse", effect: () => { state.reputation -= 15; addLog("The Wraith is offended. A cold wind blows through the hotel."); } }
+                ]
+            },
+            {
+                text: "Ghost hunters are snooping around. Pay them off with ecto, scare them away (risky), or let one 'tour' for publicity.",
+                options: [
+                    { label: "Bribe ( -20 Ecto )", effect: () => { if (state.ectoplasm >= 20) { state.ectoplasm -= 20; addLog("The hunters left richer and quieter."); } else { addLog("Not enough ecto! They spread rumors."); state.reputation -= 10; } } },
+                    { label: "Scare Them", effect: () => { if (Math.random() > 0.5) { addLog("They fled screaming. +Reputation!"); state.reputation += 12; } else { addLog("They filmed everything. Disaster."); state.reputation -= 20; state.essence += 5; } } },
+                    { label: "Give Tour", effect: () => { state.reputation += 8; state.essence += 10; addLog("Viral video of 'the most authentic haunted hotel'. Mixed but lucrative publicity."); } }
+                ]
+            }
+        ];
+
+        // Staff roles for deeper management
+        const STAFF_TYPES = {
+            "Bellhop": { desc: "General help. +1 satisfaction to all guests.", bonus: 1, cost: 35 },
+            "Caretaker": { desc: "Reduces negative event impact.", eventMitigation: 0.5, cost: 45 },
+            "Exorcist": { desc: "Protects against bad reputation hits.", repShield: 5, cost: 50 }
+        };
+
+        // Guest type synergies/quirks for complexity
+        const GUEST_SYNERGIES = {
+            "Vampire": { likes: ["Ghost"], hates: ["Werewolf (day form)"], bonus: 10, penalty: -15 },
+            "Poltergeist": { likes: ["Skeleton"], hates: [], bonus: 8, penalty: 0 },
+            "Banshee": { likes: ["Wraith"], hates: ["Ghost"], bonus: 12, penalty: -10 }
+        };
+        
+        // ==================== GAME STATE ====================
+        let state = {
+            night: 1,
+            reputation: 55,
+            ectoplasm: 35,
+            essence: 0,  // Ethereal Essence - premium resource from exceptional nights, spent on rituals & permanent power
+            rooms: [],
+            waiting: [],
+            log: [],
+            ownedUpgrades: [],
+            staff: [],  // Staff roles for depth: [{type: 'Bellhop', bonus: 1}, ...]
+            milestones: [],  // Unlocked boons for progression
+            totalGuestsServed: 0,
+            totalEssenceEarned: 0,
+            perfectNights: 0,
+            bestReputation: 55
+        };
+        
+        let selectedGuestIndex = null;
+        let pendingUpgrade = null;  // For strategic per-room upgrades (gamedev: decisions matter!)
+        
+        // ==================== INIT ====================
+        function initGame() {
+            // Reset state
+            state = {
+                night: 1,
+                reputation: 55,
+                ectoplasm: 35,
+                essence: 0,
+                rooms: Array.from({ length: 5 }, (_, i) => ({
+                    id: i + 1,
+                    level: 1,
+                    features: [],
+                    guest: null,
+                    theme: null
+                })),
+                waiting: [],
+                log: [],
+                ownedUpgrades: [],
+                staff: [],
+                milestones: [],
+                totalGuestsServed: 0,
+                totalEssenceEarned: 0,
+                perfectNights: 0,
+                bestReputation: 55
+            };
+            
+            // Starting guests
+            for (let i = 0; i < 3; i++) {
+                state.waiting.push(generateGuest());
+            }
+            
+            state.log.push("The Spectral Suites has opened its doors to the dead.");
+            state.log.push("A few spirits have already arrived looking for rooms.");
+            state.log.push("Tip: Open the Codex (footer) after playing â€” it now holds the gamedev reflections from building this game. Loop closed when you win.");
+            
+            saveToLocalStorage();
+            render();
+        }
+        
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('ghostHotelState');
+            if (saved) {
+                try {
+                    const loaded = JSON.parse(saved);
+                    state = { ...state, ...loaded };
+                    // Ensure rooms have proper structure
+                    if (!state.rooms || state.rooms.length === 0) {
+                        state.rooms = Array.from({ length: 5 }, (_, i) => ({
+                            id: i + 1, level: 1, features: [], guest: null, theme: null
+                        }));
+                    }
+                    if (!state.staff) state.staff = [];
+                    if (!state.essence) state.essence = 0;
+                    if (!state.milestones) state.milestones = [];
+                    if (!state.totalGuestsServed) state.totalGuestsServed = 0;
+                    if (!state.totalEssenceEarned) state.totalEssenceEarned = 0;
+                    if (!state.perfectNights) state.perfectNights = 0;
+                    if (!state.bestReputation) state.bestReputation = state.reputation || 55;
+                    return true;
+                } catch (e) {}
+            }
+            return false;
+        }
+        
+        function saveToLocalStorage() {
+            localStorage.setItem('ghostHotelState', JSON.stringify(state));
+        }
+        
+        // ==================== GENERATORS ====================
+        function generateGuest() {
+            const type = GUEST_TYPES[Math.floor(Math.random() * GUEST_TYPES.length)];
+            const title = GUEST_TITLES[Math.floor(Math.random() * GUEST_TITLES.length)];
+            const desc = GUEST_DESCRIPTORS[Math.floor(Math.random() * GUEST_DESCRIPTORS.length)];
+            const surname = GUEST_SURNAMES[Math.floor(Math.random() * GUEST_SURNAMES.length)];
+            
+            const name = `${title} ${desc} ${surname}`;
+            
+            const numNeeds = 1 + Math.floor(Math.random() * 2);
+            const needs = [];
+            const shuffled = [...NEEDS].sort(() => 0.5 - Math.random());
+            for (let i = 0; i < numNeeds; i++) {
+                needs.push(shuffled[i]);
+            }
+            
+            return {
+                name,
+                type,
+                needs,
+                mood: 65 + Math.floor(Math.random() * 25),
+                satisfaction: 0
+            };
+        }
+        
+        // ==================== CORE GAME LOGIC ====================
+        function assignGuestToRoom(guestIndex, roomId) {
+            if (guestIndex < 0 || guestIndex >= state.waiting.length) return false;
+            
+            const guest = state.waiting[guestIndex];
+            const room = state.rooms.find(r => r.id === roomId);
+            
+            if (!room || room.guest) return false;
+            
+            room.guest = guest;
+            state.waiting.splice(guestIndex, 1);
+            
+            addLog(`${guest.name} has been checked into Room ${roomId}.`);
+            selectedGuestIndex = null;
+            
+            render();
+            saveToLocalStorage();
+            return true;
+        }
+        
+        function buyUpgrade(upgradeName) {
+            const upgrade = UPGRADE_CATALOG.find(u => u.name === upgradeName);
+            if (!upgrade) return false;
+            
+            // Regular upgrades are repeatable (buy multiple times to apply to more rooms for strategic depth)
+            // Only staff has special handling
+            if (state.ectoplasm < upgrade.cost) return false;
+            
+            // Gamedev choice: Buy deducts cost immediately, but you choose which room gets it for strategy
+            state.ectoplasm -= upgrade.cost;
+
+            if (upgrade.name === "Hire Spectral Bellhop") {
+                // Hire specific role
+                const role = "Bellhop";
+                state.staff.push({ type: role, bonus: STAFF_TYPES[role].bonus || 1 });
+                addLog(`Hired a ${role}! Passive satisfaction boost active.`);
+                // Staff doesn't go to owned in the same way
+            } else {
+                // For regular upgrades: buy pays, then pending to apply to a chosen room.
+                // Repeatable for multiple rooms.
+                pendingUpgrade = upgrade;
+                addLog(`Purchased ${upgrade.name}. Click a room to install it. (You can buy this upgrade again later for other rooms - each copy costs full price.)`);
+            }
+            render();
+            saveToLocalStorage();
+            return true;
+        }
+        
+        function advanceNight() {
+            // Calculate satisfaction for every occupied room
+            let totalSatisfaction = 0;
+            let guestsServed = 0;
+            let nightResults = [];  // For juicy summary modal
+            
+            state.rooms.forEach(room => {
+                if (!room.guest) return;
+                
+                const guest = room.guest;
+                let satisfied = 0;
+                
+                guest.needs.forEach(need => {
+                    const tags = NEED_TAGS[need] || [need.toLowerCase().split(' ')[0]];
+                    const matched = room.features.some(feature => {
+                        const featLower = feature.toLowerCase();
+                        return tags.some(tag => featLower.includes(tag) || tag.includes(featLower));
+                    });
+                    if (matched) satisfied++;
+                });
+
+                // Staff passive help (now role-based)
+                let staffHelp = 0;
+                if (state.staff && state.staff.length > 0) {
+                    state.staff.forEach(s => {
+                        if (s.type === "Bellhop") staffHelp += (s.bonus || 1);
+                        // Other roles handled in events
+                    });
+                }
+                satisfied = Math.min(guest.needs.length, satisfied + Math.floor(staffHelp));
+
+                // Guest type synergies/quirks (increased complexity)
+                let synergyBonus = 0;
+                const typeSynergy = GUEST_SYNERGIES[guest.type] || {};
+                if (typeSynergy.likes) {
+                    // Check other rooms for liked types
+                    state.rooms.forEach(otherRoom => {
+                        if (otherRoom.guest && otherRoom.guest !== guest && typeSynergy.likes.includes(otherRoom.guest.type)) {
+                            synergyBonus += (typeSynergy.bonus || 5);
+                        }
+                    });
+                }
+                if (typeSynergy.hates) {
+                    state.rooms.forEach(otherRoom => {
+                        if (otherRoom.guest && otherRoom.guest !== guest && typeSynergy.hates.includes(otherRoom.guest.type)) {
+                            synergyBonus -= (typeSynergy.penalty || 8);
+                        }
+                    });
+                }
+                satisfied = Math.max(0, Math.min(guest.needs.length, satisfied + Math.floor(synergyBonus / 10)));
+                
+                const satPercent = Math.round((satisfied / Math.max(1, guest.needs.length)) * 100);
+                guest.satisfaction = satPercent;
+                guest.mood = Math.max(20, Math.min(100, guest.mood + Math.round((satPercent - 50) / 2.5)));
+                
+                totalSatisfaction += satPercent;
+                guestsServed++;
+                
+                // Income
+                const income = Math.max(5, Math.floor(satPercent / 7));
+                state.ectoplasm += income;
+
+                // Essence from exceptional service (new resource complexity)
+                if (satPercent >= 85) {
+                    const essenceGain = Math.floor((satPercent - 80) / 5);
+                    state.essence += essenceGain;
+                    state.totalEssenceEarned += essenceGain;
+                    if (essenceGain > 0) addLog(`${guest.name} generated ${essenceGain} Ethereal Essence through outstanding haunting.`);
+                }
+                
+                if (satPercent === 100) {
+                    state.perfectNights = (state.perfectNights || 0) + 1;
+                }
+                
+                nightResults.push({
+                    name: guest.name,
+                    type: guest.type,
+                    sat: satPercent,
+                    income: income,
+                    mood: guest.mood
+                });
+                
+                // Move guest to history (we don't track full history for simplicity)
+                addLog(`${guest.name} checked out with ${satPercent}% satisfaction.`);
+            });
+            
+            // Track cumulative stats for satisfying goal/score
+            state.totalGuestsServed = (state.totalGuestsServed || 0) + guestsServed;
+            if (state.reputation > (state.bestReputation || 0)) state.bestReputation = state.reputation;
+            
+            // Clear rooms
+            state.rooms.forEach(r => r.guest = null);
+            
+            // Reputation change
+            const avgSat = guestsServed > 0 ? Math.round(totalSatisfaction / guestsServed) : 50;
+            const repChange = Math.round((avgSat - 50) / 5);
+            state.reputation = Math.max(0, Math.min(100, state.reputation + repChange));
+            
+            addLog(`Night ${state.night} ended. Average satisfaction: ${avgSat}%.`);
+            
+            // Random event - sometimes choice for increased agency
+            if (Math.random() < 0.65) {
+                if (Math.random() < 0.35 && CHOICE_EVENTS.length > 0) {
+                    // Choice event
+                    const choiceEvent = CHOICE_EVENTS[Math.floor(Math.random() * CHOICE_EVENTS.length)];
+                    showChoiceEvent(choiceEvent);
+                } else {
+                    const event = FUN_EVENTS[Math.floor(Math.random() * FUN_EVENTS.length)];
+                    applyEvent(event);
+                }
+            }
+            
+            // New arrivals
+            const freeRooms = state.rooms.filter(r => !r.guest).length;
+            const newGuests = Math.min(3, Math.max(1, Math.floor(Math.random() * (freeRooms + 1))));
+            
+            for (let i = 0; i < newGuests; i++) {
+                state.waiting.push(generateGuest());
+            }
+            
+            if (newGuests > 0) {
+                addLog(`${newGuests} new spectral guests have arrived.`);
+            }
+
+            // Gamedev progression: Hotel grows over time (more rooms = more strategy & chaos)
+            if (state.night % 5 === 0 && state.rooms.length < 8) {
+                const newRoomId = state.rooms.length + 1;
+                state.rooms.push({
+                    id: newRoomId,
+                    level: 1,
+                    features: [],
+                    guest: null
+                });
+                addLog(`A new wing has materialized! Room ${newRoomId} is now available.`);
+            }
+            
+            state.night++;
+            
+            // Satisfying Goal: Victory condition
+            if (state.night > 20 && state.reputation >= 70) {
+                addLog("The hotel has achieved legendary status among the dead! You have become the Eternal Host.");
+                render();
+                setTimeout(() => {
+                    showVictory();
+                }, 600);
+                return;
+            }
+            
+            // Game over check
+            if (state.reputation <= 12) {
+                addLog("The spirits have had enough. Your reputation is ruined. The hotel is now condemned.");
+                render();
+                setTimeout(() => {
+                    showGameOver();
+                }, 600);
+                return;
+            }
+            
+            // Gamedev: End Night is the core payoff moment - show juicy summary modal
+            showNightSummary(guestsServed, avgSat, repChange, nightResults, state.essence);
+            
+            render();
+            saveToLocalStorage();
+        }
+        
+        function applyEvent(eventText) {
+            let modified = eventText;
+            let severity = 1;
+            
+            // Staff roles mitigate (complexity)
+            if (state.staff && state.staff.some(s => s.type === "Caretaker")) {
+                severity = 0.5;
+                modified = modified.replace(/-\d+/, m => "-" + Math.floor(parseInt(m.slice(1)) * severity));
+            }
+            
+            if (modified.includes("-12 ectoplasm") || modified.includes("ectoplasm")) {
+                const loss = Math.floor(12 * severity);
+                state.ectoplasm = Math.max(0, state.ectoplasm - loss);
+            } else if (modified.includes("Reputation damage") || modified.includes("-8 reputation")) {
+                const loss = Math.floor(8 * severity);
+                state.reputation = Math.max(0, state.reputation - loss);
+            } else if (modified.includes("+18 rep")) {
+                state.reputation = Math.min(100, state.reputation + 18);
+            } else if (modified.includes("thrilled")) {
+                state.ectoplasm += 9;
+            }
+            
+            addLog(modified);
+        }
+        
+        function addLog(message) {
+            state.log.unshift(`Night ${state.night}: ${message}`);
+            if (state.log.length > 9) state.log.pop();
+        }
+        
+        // ==================== RENDER ====================
+        function render() {
+            // Stats
+            document.getElementById('night').textContent = state.night;
+            document.getElementById('reputation').textContent = state.reputation;
+            document.getElementById('ectoplasm').textContent = state.ectoplasm;
+            const essenceEl = document.getElementById('essence');
+            if (essenceEl) essenceEl.textContent = state.essence || 0;
+
+            // Goal progress (satisfying long-term goal)
+            const goalEl = document.getElementById('goal-progress');
+            if (goalEl) {
+                const nightsLeft = Math.max(0, 20 - state.night);
+                const repNeeded = Math.max(0, 70 - state.reputation);
+                goalEl.innerHTML = `Nights left: <span class="font-bold">${nightsLeft}</span> | Rep needed: <span class="font-bold">${repNeeded}</span>`;
+            }
+
+            // Staff indicator (subtle progression)
+            let staffEl = document.getElementById('staff-display');
+            if (!staffEl) {
+                staffEl = document.createElement('div');
+                staffEl.id = 'staff-display';
+                staffEl.className = 'text-xs text-violet-400 text-center mt-1';
+                document.getElementById('ectoplasm').parentElement.appendChild(staffEl);
+            }
+            const staffCount = (state.staff || []).length;
+            staffEl.textContent = staffCount > 0 ? `+ ${staffCount} Spectral Staff` : '';
+            staffEl.style.display = staffCount > 0 ? 'block' : 'none';
+
+            // Pending upgrade banner (strategic feedback)
+            const bigAction = document.querySelector('.mb-6 > button').parentElement;
+            let pendingBanner = document.getElementById('pending-banner');
+            if (pendingUpgrade) {
+                if (!pendingBanner) {
+                    pendingBanner = document.createElement('div');
+                    pendingBanner.id = 'pending-banner';
+                    pendingBanner.className = 'text-center text-sm text-amber-400 mb-2';
+                    bigAction.parentElement.insertBefore(pendingBanner, bigAction);
+                }
+                pendingBanner.textContent = `â¬† Install ${pendingUpgrade.name} by clicking an empty room!`;
+            } else if (pendingBanner) {
+                pendingBanner.remove();
+            }
+            
+            // Rooms
+            const roomsGrid = document.getElementById('rooms-grid');
+            roomsGrid.innerHTML = '';
+            
+            state.rooms.forEach(room => {
+                const div = document.createElement('div');
+                div.className = `room-card haunted border rounded-2xl p-3 min-h-[118px] ${room.guest ? '' : 'room-empty drop-zone'}`;
+                div.dataset.roomId = room.id;
+                
+                let content = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-semibold">Room ${room.id} <span class="text-[10px] text-violet-400">Lvl ${room.level}</span></div>
+                `;
+                
+                if (room.guest) {
+                    const g = room.guest;
+                    const moodClass = g.mood > 70 ? 'mood-good' : (g.mood > 40 ? 'mood-ok' : 'mood-bad');
+                    
+                    content += `
+                            <div class="mt-1">
+                                <div class="font-medium leading-tight">${g.name}</div>
+                                <div class="text-xs text-violet-300">${g.type}</div>
+                            </div>
+                            <div class="mt-2 flex items-center gap-x-2">
+                                <div class="${moodClass} text-2xl font-mono leading-none">${g.mood}</div>
+                                <div>
+                                    <div class="text-[10px] -mb-0.5 text-violet-400">MOOD</div>
+                                    <div class="text-[10px]">Sat: <span class="font-mono">${g.satisfaction}%</span></div>
+                                </div>
+                            </div>
+                            <div class="mt-1.5 text-[10px] text-violet-400 leading-tight">Needs: ${g.needs.join(', ')}</div>
+                            ${room.features.length ? `<div class="mt-1 text-[9px] text-emerald-400/70">Features: ${room.features.slice(0,2).join(', ')}</div>` : ''}
+                            <div class="mt-1 text-[9px] ${g.satisfaction >= 70 ? 'text-emerald-400' : g.satisfaction >= 40 ? 'text-amber-400' : 'text-red-400'}">Met: ${g.satisfaction}%</div>
+                            <button onclick="evictGuest(${room.id}); event.stopImmediatePropagation();" class="mt-2 text-[9px] px-2 py-0.5 bg-red-900/50 hover:bg-red-800 rounded text-red-300">Evict (-10 Ecto)</button>
+                    `;
+                } else {
+                    content += `<div class="mt-3 text-sm text-violet-400">Empty</div>`;
+                    if (room.features.length) {
+                        content += `<div class="text-[9px] text-emerald-400/70 mt-1">Features: ${room.features.slice(0,2).join(', ')}</div>`;
+                    }
+                    
+                    // Make empty rooms drop targets
+                    div.addEventListener('dragover', e => {
+                        e.preventDefault();
+                        div.classList.add('drag-over');
+                    });
+                    div.addEventListener('dragleave', () => div.classList.remove('drag-over'));
+                    div.addEventListener('drop', e => {
+                        e.preventDefault();
+                        div.classList.remove('drag-over');
+                        if (selectedGuestIndex !== null) {
+                            assignGuestToRoom(selectedGuestIndex, room.id);
+                        }
+                    });
+                    
+                    // Click handlers: assign if guest selected, or apply pending upgrade (gamedev: meaningful choices)
+                    div.addEventListener('click', () => {
+                        if (pendingUpgrade) {
+                            if (!room.features.includes(pendingUpgrade.name)) {
+                                room.features.push(pendingUpgrade.name);
+                                addLog(`${pendingUpgrade.name} installed in Room ${room.id}.`);
+                                pendingUpgrade = null;
+                                render();
+                                saveToLocalStorage();
+                            } else {
+                                alert("That room already has this upgrade.");
+                            }
+                        } else if (selectedGuestIndex !== null) {
+                            assignGuestToRoom(selectedGuestIndex, room.id);
+                        }
+                    });
+                }
+                
+                content += `</div>`;
+                div.innerHTML = content;
+                
+                // Click a room with guest to show info (future expansion)
+                roomsGrid.appendChild(div);
+            });
+            
+            // Waiting guests
+            const waitingContainer = document.getElementById('waiting-guests');
+            waitingContainer.innerHTML = '';
+            document.getElementById('waiting-count').textContent = state.waiting.length;
+
+            // Staff display (complexity)
+            const staffCountEl = document.getElementById('staff-count');
+            const staffListEl = document.getElementById('staff-list');
+            if (staffCountEl) staffCountEl.textContent = (state.staff || []).length;
+            if (staffListEl) {
+                staffListEl.innerHTML = '';
+                if (!state.staff || state.staff.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'text-xs text-violet-400';
+                    empty.textContent = 'No staff hired. The ghosts do everything themselves.';
+                    staffListEl.appendChild(empty);
+                } else {
+                    state.staff.forEach((s, i) => {
+                        const div = document.createElement('div');
+                        div.className = 'text-xs py-0.5 border-b border-[#463a6b] last:border-0';
+                        div.textContent = `${s.type} (Bonus: +${s.bonus || 1} sat)`;
+                        staffListEl.appendChild(div);
+                    });
+                }
+            }
+            
+            if (state.waiting.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'text-sm text-violet-400 px-2 py-1';
+                empty.textContent = 'The lobby is quiet... for now.';
+                waitingContainer.appendChild(empty);
+            } else {
+                state.waiting.forEach((guest, index) => {
+                    const card = document.createElement('div');
+                    card.className = `guest-card haunted border rounded-2xl px-3 py-2 text-sm flex-1 min-w-[148px] ${selectedGuestIndex === index ? 'ring-2 ring-violet-400' : ''}`;
+                    card.draggable = true;
+                    
+                    card.innerHTML = `
+                        <div class="font-medium leading-tight">${guest.name}</div>
+                        <div class="text-violet-300 text-xs">${guest.type}</div>
+                        <div class="mt-1 flex flex-wrap gap-1">
+                            ${guest.needs.map(n => `<span class="need-tag text-violet-300">${n}</span>`).join('')}
+                        </div>
+                    `;
+                    
+                    // Selection
+                    card.addEventListener('click', () => {
+                        selectedGuestIndex = (selectedGuestIndex === index) ? null : index;
+                        render();
+                    });
+                    
+                    // Drag
+                    card.addEventListener('dragstart', e => {
+                        selectedGuestIndex = index;
+                        e.dataTransfer.setData('text/plain', index);
+                    });
+                    
+                    waitingContainer.appendChild(card);
+                });
+            }
+            
+            // Upgrades shop
+            const shop = document.getElementById('upgrades-shop');
+            shop.innerHTML = '';
+            
+            UPGRADE_CATALOG.forEach(up => {
+                const isStaff = up.name === "Hire Spectral Bellhop";
+                const staffCount = isStaff ? (state.staff || []).length : 0;
+                const canAfford = state.ectoplasm >= up.cost;
+                
+                const card = document.createElement('div');
+                card.className = `haunted border rounded-2xl px-3 py-2 text-sm flex justify-between items-center`;
+                
+                let rightHtml = '';
+                if (isStaff && staffCount > 0) {
+                    rightHtml = `<button class="px-3 py-1 rounded-xl text-xs haunted-button ${canAfford ? 'bg-violet-600 hover:bg-violet-500' : 'bg-zinc-700 cursor-not-allowed'}" ${canAfford ? '' : 'disabled'}>Hire Another (+${up.cost})</button>`;
+                } else {
+                    // Regular upgrades are repeatable - buy to apply to additional rooms
+                    rightHtml = `<button class="px-3 py-1 rounded-xl text-xs haunted-button ${canAfford ? 'bg-violet-600 hover:bg-violet-500' : 'bg-zinc-700 cursor-not-allowed'}" ${canAfford ? '' : 'disabled'}>${up.cost} ECTO</button>`;
+                }
+                
+                card.innerHTML = `
+                    <div class="pr-3">
+                        <div class="font-medium">${up.name} ${isStaff && staffCount > 0 ? `(${staffCount})` : ''}</div>
+                        <div class="text-xs text-violet-400">${up.desc}</div>
+                        <div class="text-[9px] text-emerald-300/70">Covers: ${up.tags.join(', ')}</div>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                        ${rightHtml}
+                    </div>
+                `;
+                
+                const btn = card.querySelector('button');
+                if (btn) {
+                    btn.addEventListener('click', () => {
+                        if (buyUpgrade(up.name)) {
+                            btn.textContent = isStaff ? 'HIRED!' : 'INSTALLED!';
+                            setTimeout(() => render(), 420);
+                        }
+                    });
+                }
+                
+                shop.appendChild(card);
+            });
+            
+            // Event log
+            const logEl = document.getElementById('event-log');
+            logEl.innerHTML = state.log.map(entry => `<div>${entry}</div>`).join('');
+            
+            // Clear selected when no waiting guests
+            if (state.waiting.length === 0) selectedGuestIndex = null;
+        }
+        
+        function clearLog() {
+            state.log = [];
+            render();
+            saveToLocalStorage();
+        }
+        
+        // ==================== SAVE / LOAD / NEW ====================
+        function saveGame() {
+            saveToLocalStorage();
+            const orig = event?.target?.textContent;
+            const btns = document.querySelectorAll('button');
+            // simple feedback
+            alert('Game saved to this browser.');
+        }
+        
+        function loadGame() {
+            if (loadFromLocalStorage()) {
+                render();
+                alert('Save loaded.');
+            } else {
+                alert('No saved game found.');
+            }
+        }
+        
+        function newGame() {
+            if (confirm('Start a completely new hotel?')) {
+                localStorage.removeItem('ghostHotelState');
+                initGame();
+            }
+        }
+        
+        // ==================== KEYBOARD SHORTCUTS (nice to have) ====================
+        function setupKeyboard() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'n' || e.key === 'N') {
+                    if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+                    e.preventDefault();
+                    advanceNight();
+                }
+                if (e.key === '?' ) {
+                    e.preventDefault();
+                    alert('Keyboard: N = End Night\nDrag guests onto rooms or click guest then click room.\nBuy upgrades directly from the shop.');
+                }
+            });
+            
+            // Click anywhere to clear selection
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#waiting-guests') && selectedGuestIndex !== null) {
+                    // Only clear if not clicking a room or guest
+                    if (!e.target.closest('.room-card') && !e.target.closest('.guest-card')) {
+                        selectedGuestIndex = null;
+                        render();
+                    }
+                }
+            });
+        }
+
+        // ==================== JUICY END-NIGHT EXPERIENCE (gamedev focus: make resolution feel amazing) ====================
+        function showNightSummary(guestsServed, avgSat, repChange, nightResults, essenceGained) {
+            const modal = document.getElementById('night-summary-modal');
+            const titleEl = document.getElementById('summary-title');
+            const statsEl = document.getElementById('summary-stats');
+            const eventsEl = document.getElementById('summary-events');
+            const flavorEl = document.getElementById('summary-flavor');
+
+            titleEl.textContent = `Night ${state.night - 1} Results`;
+
+            // Stats
+            const repColor = repChange >= 0 ? 'text-emerald-400' : 'text-red-400';
+            const currentScore = Math.floor((state.totalGuestsServed || 0) * 2 + (state.totalEssenceEarned || 0) * 1.5 + (state.perfectNights || 0) * 10 + state.bestReputation * 3);
+            statsEl.innerHTML = `
+                <div><span class="text-2xl font-mono">${avgSat}</span><div class="text-xs">AVG SAT</div></div>
+                <div><span class="text-2xl font-mono ${repColor}">${repChange >= 0 ? '+' : ''}${repChange}</span><div class="text-xs">REP</div></div>
+                <div><span class="text-2xl font-mono">+${Math.floor(guestsServed * (avgSat / 10))}</span><div class="text-xs">ECTO</div></div>
+                <div><span class="text-2xl font-mono text-amber-300">+${essenceGained || 0}</span><div class="text-xs">ESSENCE</div></div>
+                <div class="mt-1 text-xs">Run Score: <span class="font-mono">${currentScore}</span></div>
+            `;
+
+            // Breakdown with star guest for satisfying feedback
+            let breakdown = '';
+            let starGuest = null;
+            if (nightResults && nightResults.length > 0) {
+                nightResults.forEach(r => {
+                    const moodEmoji = r.mood > 70 ? 'ðŸ˜Š' : (r.mood > 40 ? 'ðŸ˜' : 'ðŸ˜ ');
+                    breakdown += `<div>${moodEmoji} ${r.name} (${r.type}): ${r.sat}% sat â†’ +${r.income} ecto</div>`;
+                    if (!starGuest || r.sat > starGuest.sat) starGuest = r;
+                });
+                if (starGuest) {
+                    breakdown += `<div class="mt-2 text-emerald-400 font-semibold">â˜… Star Guest: ${starGuest.name} with ${starGuest.sat}% satisfaction!</div>`;
+                }
+            } else {
+                breakdown = '<div>No guests served this night. The hotel was quiet...</div>';
+            }
+            eventsEl.innerHTML = breakdown;
+
+            // Flavor text (silly commentary)
+            const flavors = [
+                "The spirits seem... marginally less disappointed.",
+                "Another night in paradise. For ghosts, anyway.",
+                "You didn't completely ruin it. Progress!",
+                "The dead are whispering your name. Not all of it is curses.",
+                "Ectoplasm flows. The hotel lives (sort of)."
+            ];
+            flavorEl.textContent = flavors[Math.floor(Math.random() * flavors.length)];
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            // Subtle audio juice (self-contained Web Audio - ghostly chime)
+            playGhostSound(guestsServed > 0 ? 'success' : 'neutral');
+        }
+
+        function closeSummaryModal() {
+            const modal = document.getElementById('night-summary-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function showGameOver() {
+            const modal = document.getElementById('night-summary-modal');
+            const titleEl = document.getElementById('summary-title');
+            const statsEl = document.getElementById('summary-stats');
+            const eventsEl = document.getElementById('summary-events');
+            const flavorEl = document.getElementById('summary-flavor');
+
+            titleEl.textContent = "The Hotel is Condemned";
+            statsEl.innerHTML = `<div class="text-red-400 text-xl">Final Reputation: ${state.reputation}</div>`;
+            eventsEl.innerHTML = `<div>The ghosts have packed their chains and left. Your management career in the afterlife is over.</div>`;
+            flavorEl.textContent = "Better luck haunting the next one.";
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            // One last sound
+            playGhostSound('fail');
+
+            // Override close to offer restart
+            const closeBtn = modal.querySelector('button');
+            closeBtn.textContent = "Try Again (New Hotel)";
+            closeBtn.onclick = () => {
+                closeSummaryModal();
+                initGame();
+                // Restore original close behavior for future
+                closeBtn.onclick = () => closeSummaryModal();
+                closeBtn.textContent = "Back to the Hotel";
+            };
+        }
+
+        function showVictory() {
+            const modal = document.getElementById('night-summary-modal');
+            const titleEl = document.getElementById('summary-title');
+            const statsEl = document.getElementById('summary-stats');
+            const eventsEl = document.getElementById('summary-events');
+            const flavorEl = document.getElementById('summary-flavor');
+
+            titleEl.textContent = "Eternal Host Achieved!";
+            const score = Math.floor((state.totalGuestsServed || 0) * 2 + (state.totalEssenceEarned || 0) * 1.5 + (state.perfectNights || 0) * 10 + state.bestReputation * 3);
+            statsEl.innerHTML = `
+                <div class="text-emerald-400 text-xl">Nights Survived: ${state.night}</div>
+                <div class="mt-2 text-sm">Total Guests Served: ${state.totalGuestsServed || 0}</div>
+                <div>Total Essence: ${state.totalEssenceEarned || 0}</div>
+                <div>Perfect Nights: ${state.perfectNights || 0}</div>
+                <div class="mt-2 text-lg font-mono">FINAL SCORE: ${score}</div>
+            `;
+            eventsEl.innerHTML = `<div>The spirits will sing your name for eternity. The Spectral Suites is now a legend among the dead. Congratulations, Eternal Host!</div><div class="mt-2 text-xs opacity-80">The Codex now permanently holds the gamedev reflections from building this game. Loop closed.</div>`;
+            flavorEl.textContent = "You did it. The dead are impressed. (Rare.)";
+
+            // Auto-unlock a special "Loop Closed" achievement on victory
+            if (!state.milestones.includes("Loop Closed")) {
+                state.milestones.push("Loop Closed");
+                addLog("Achievement unlocked in the Codex: 'Loop Closed' â€” Gamedev reflections committed.");
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            playGhostSound('success');
+
+            const closeBtn = modal.querySelector('button');
+            closeBtn.textContent = "Start New Legend";
+            closeBtn.onclick = () => {
+                closeSummaryModal();
+                initGame();
+                closeBtn.onclick = () => closeSummaryModal();
+                closeBtn.textContent = "Back to the Hotel";
+            };
+        }
+
+        // Simple self-contained audio (Web Audio API - no external files)
+        function playGhostSound(type = 'neutral') {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+
+                osc.type = type === 'success' ? 'sine' : (type === 'fail' ? 'sawtooth' : 'triangle');
+                osc.frequency.value = type === 'success' ? 440 : (type === 'fail' ? 220 : 330);
+
+                filter.type = 'lowpass';
+                filter.frequency.value = 800;
+
+                gain.gain.value = 0.15;
+
+                const duration = type === 'success' ? 0.6 : 0.9;
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                // Silent fail if audio blocked - game still works
+            }
+        }
+
+        function performRitual() {
+            if ((state.essence || 0) < 15) {
+                alert("Not enough Ethereal Essence (need 15).");
+                return;
+            }
+            state.essence -= 15;
+
+            if (Math.random() > 0.5) {
+                // Good outcome
+                state.reputation = Math.min(100, state.reputation + 15);
+                addLog("The ritual succeeds! The spirits are appeased. +15 Reputation.");
+                if (Math.random() > 0.7) {
+                    state.staff.push({ type: "Bellhop", bonus: 1 });
+                    addLog("A new Bellhop manifests from the ritual!");
+                }
+            } else {
+                // Risky
+                state.reputation = Math.max(0, state.reputation - 10);
+                addLog("The ritual backfires. The ghosts are restless. -10 Reputation.");
+                state.essence += 5; // small refund
+            }
+            render();
+            saveToLocalStorage();
+            playGhostSound('success');
+        }
+
+        function evictGuest(roomId) {
+            if (state.ectoplasm < 10) {
+                alert("Not enough Ectoplasm to evict (costs 10).");
+                return;
+            }
+            const room = state.rooms.find(r => r.id === roomId);
+            if (room && room.guest) {
+                const guest = room.guest;
+                state.ectoplasm -= 10;
+                addLog(`Evicted ${guest.name} from Room ${roomId}. The other spirits notice...`);
+                room.guest = null;
+                // Slight rep hit for evicting
+                state.reputation = Math.max(0, state.reputation - 3);
+                render();
+                saveToLocalStorage();
+            }
+        }
+
+        function showCodex() {
+            const achievements = [];
+            if ((state.totalGuestsServed || 0) >= 10) achievements.push("â€¢ Served 10+ guests - 'The Welcoming Host'");
+            if ((state.perfectNights || 0) >= 3) achievements.push("â€¢ 3 Perfect Nights - 'Spectral Perfectionist'");
+            if ((state.bestReputation || 0) >= 80) achievements.push("â€¢ Peak Reputation 80+ - 'Beloved by the Dead'");
+            if ((state.totalEssenceEarned || 0) >= 50) achievements.push("â€¢ 50+ Essence Generated - 'Essence Connoisseur'");
+            if (state.night >= 15) achievements.push("â€¢ Survived 15 Nights - 'Veteran Hauntmaster'");
+            if (state.milestones && state.milestones.length > 0) achievements.push("â€¢ Unlocked Milestones - 'Pact Binder'");
+            if (state.milestones && state.milestones.includes("Loop Closed")) achievements.push("â€¢ Loop Closed - 'Gamedev Reflections Committed to the Codex'");
+
+            let codexText = "GUEST CODEX & ACHIEVEMENTS\n\n";
+            codexText += "Discovered Guest Types: " + GUEST_TYPES.join(", ") + "\n\n";
+            codexText += "Achievements Unlocked:\n";
+            if (achievements.length === 0) {
+                codexText += "(None yet - keep haunting!)\n";
+            } else {
+                codexText += achievements.join("\n") + "\n";
+            }
+            codexText += "\nTotal Guests Served: " + (state.totalGuestsServed || 0);
+            codexText += "\nBest Reputation: " + (state.bestReputation || state.reputation);
+            codexText += "\nPerfect Nights: " + (state.perfectNights || 0);
+            codexText += "\nTotal Essence: " + (state.totalEssenceEarned || 0);
+
+            // === COMMIT TO MEMORY: Gamedev Learnings from Building This ===
+            codexText += "\n\n--- GAMEDDEV REFLECTIONS (Committed to the Codex) ---\n";
+            codexText += "â€¢ Clear goals + live progress (the Night 20 / Rep 70 tracker) turns 'play forever' into a satisfying arc with a real win state.\n";
+            codexText += "â€¢ Layered systems (Ecto + Essence + Staff roles + Guest synergies + Per-room upgrades) create depth and trade-offs without a bloated UI.\n";
+            codexText += "â€¢ Juice on the core loop (End Night modal with Star Guest, cumulative score, choice events, Web Audio) makes every turn feel like an event.\n";
+            codexText += "â€¢ One-screen constraint forced elegant immediate feedback (drag-assign, pending upgrades, Met % on rooms, Covers: tags in shop).\n";
+            codexText += "â€¢ User feedback loops (questions about 'once' upgrades and unsatisfied needs) led to better clarity: repeatable upgrades with explicit tags + visible satisfaction %.\n";
+            codexText += "â€¢ Scarcity + agency (per-room placement, rituals, evict, choice dilemmas) increases engagement and replay value.\n";
+            codexText += "â€¢ Self-contained single-file HTML proved constraints breed creativity: everything (logic, save via localStorage, audio, UI) lives together.\n";
+            codexText += "â€¢ Goal: Make the player feel like a legend. The Codex + victory screen + star guests deliver that 'I built something cool' feeling.\n";
+            codexText += "\nLoop closed. The Spectral Suites is now a complete, satisfying little game. Play it, break it, make it yours.";
+
+            codexText += "\n\nKeep playing to unlock more legends!";
+
+            alert(codexText);
+        }
+
+        // Choice event modal for deeper decision making
+        function showChoiceEvent(choiceEvent) {
+            const modal = document.getElementById('night-summary-modal');
+            const titleEl = document.getElementById('summary-title');
+            const statsEl = document.getElementById('summary-stats');
+            const eventsEl = document.getElementById('summary-events');
+            const flavorEl = document.getElementById('summary-flavor');
+
+            titleEl.textContent = "A Spectral Dilemma";
+            statsEl.innerHTML = `<div class="text-sm italic">${choiceEvent.text}</div>`;
+            eventsEl.innerHTML = '';
+
+            // Create choice buttons
+            const choicesDiv = document.createElement('div');
+            choicesDiv.className = 'flex flex-col gap-2 mt-4';
+
+            choiceEvent.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = `haunted-button w-full text-left px-4 py-2 rounded-2xl border border-violet-500/50 hover:bg-violet-600/20 text-sm`;
+                btn.innerHTML = `<strong>${opt.label}</strong>`;
+                btn.onclick = () => {
+                    opt.effect();
+                    closeSummaryModal();
+                    // Re-render after choice effect
+                    setTimeout(() => {
+                        render();
+                        saveToLocalStorage();
+                    }, 50);
+                };
+                choicesDiv.appendChild(btn);
+            });
+
+            eventsEl.appendChild(choicesDiv);
+            flavorEl.textContent = "Choose wisely... or not.";
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        
+        // ==================== BOOT ====================
+        function boot() {
+            // Tailwind script already in head
+            const loaded = loadFromLocalStorage();
+            
+            if (!loaded || state.rooms.length === 0) {
+                initGame();
+            } else {
+                // Make sure we have at least some waiting guests if none
+                if (state.waiting.length === 0 && state.rooms.every(r => !r.guest)) {
+                    for (let i = 0; i < 2; i++) state.waiting.push(generateGuest());
+                }
+                render();
+            }
+            
+            setupKeyboard();
+            
+            // Initial render is already called in init or above
+            // Add a tiny welcome log if brand new
+            if (state.log.length <= 2) {
+                // already handled in init
+            }
+            
+            // Bonus: show a tip once
+            setTimeout(() => {
+                const log = document.getElementById('event-log');
+                if (log && state.night === 1 && state.log.length < 4) {
+                    // already good
+                }
+            }, 1200);
+        }
+        
+        // Start the game
+        window.onload = boot;
+        
+        // Expose a couple things to console for power users / debugging
+        window.GhostHotel = { getState: () => state, advance: () => { advanceNight(); } };
+    </script>
+</body>
+</html>

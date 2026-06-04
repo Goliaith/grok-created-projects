@@ -90,6 +90,14 @@ The focus is on quality, security, controlled distribution, and preserving histo
   - See `helixweave/PROPOSAL.md` for the complete scientific-hypothesis-structured proposal and `helixweave/README.md` for usage/traceability.
   - Source in repo: [./helixweave](./helixweave)
 
+- **[Ghost Hotel Tycoon — The Spectral Suites](./ghost-hotel-tycoon)** (added ~June 2026)
+  - A fully self-contained, offline-first, single-file browser game: silly supernatural hotel management tycoon.
+  - Key highlights: drag-and-drop (or click) room assignment, strategic per-room upgrades (repeatable for multiple rooms), staff roles with unique passives, guest type synergies/quirks, multiple resources (Ectoplasm + Reputation + Ethereal Essence), choice events with real decisions, rituals, evict mechanic, hotel growth (new rooms unlock), juicy End Night summary modals with Star Guest + score + audio, Codex with achievements + embedded Gamedev Reflections.
+  - Clear satisfying goal: Reach Night 20 with Reputation ≥ 70 to become the Eternal Host (live progress tracker + victory screen with final score).
+  - Evolved iteratively from random app idea → "make it amazing" (gamedev thinking) → "increase complexity" (layered systems) → "more satisfying" (goal, juice, features, evict, Codex) → user feedback on upgrades/needs leading to clearer mechanics.
+  - Open `ghost-hotel-tycoon/index.html` in any browser. Works completely offline. One screen, pure fun with real strategy.
+  - [Source in repo](./ghost-hotel-tycoon)
+
 (Future projects will be appended here as new subdirectories + a short update entry in this list. Existing entries are never removed or overwritten.)
 
 ## Tech & Principles
